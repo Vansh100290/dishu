@@ -31,4 +31,4 @@ If you are opening pull requests please use the dev branch as base.
 ## 📊 Check Download Stats of Pixelix Releases
 Curious how many times Pixelix has been downloaded?
 
-You can view the release download statistics here on [GitHub Release Stats](https://github-release-stats.ghostbyte.dev/ghostbyte-dev/pixelix). It’s a simple tool we also maintain to track GitHub release download counts—useful for open source developers and curious users alike!
+You can view the release download statistics here on [GitHub Release Stats](https://github-release-stats.ghostbyte.dev/ghostbyte-dev/pixelix). It’s a simple tool we also maintain to track GitHub release download counts.
