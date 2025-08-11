@@ -202,22 +202,29 @@ fun PostComposable(
         })
 
     if (viewModel.post != null) {
-        Column(modifier = modifier) {
-
+        Column(
+            modifier = modifier.clip(
+                RoundedCornerShape(16.dp)
+            ).background(MaterialTheme.colorScheme.surface).padding(top = 12.dp, bottom = 12.dp)
+        ) {
             post.rebloggedBy?.let { reblogAccount ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                     modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable(onClick = {
                         navController.navigate(Destination.Profile(reblogAccount.id))
                     })
                 ) {
-                    Icon(Icons.Outlined.Cached, contentDescription = "reblogged by")
+                    Icon(
+                        Icons.Outlined.Cached,
+                        contentDescription = "reblogged by",
+                        modifier = Modifier.size(20.dp)
+                    )
                     Text(
                         stringResource(
                             Res.string.reblogged_by,
                             reblogAccount.displayname ?: reblogAccount.username
-                        ), fontSize = 12.sp
+                        ), fontSize = 11.sp
                     )
                 }
             }
@@ -232,18 +239,21 @@ fun PostComposable(
                     model = viewModel.post!!.account.avatar,
                     error = painterResource(Res.drawable.default_avatar),
                     contentDescription = "",
-                    modifier = Modifier.height(36.dp).width(36.dp).clip(CircleShape)
+                    modifier = Modifier.height(40.dp).width(40.dp).clip(CircleShape)
                 )
                 Column(modifier = Modifier.padding(start = 8.dp)) {
-//                    Text(
-//                        text = viewModel.post!!.account.displayname ?: "",
-//                        fontWeight = FontWeight.Bold,
-//                        lineHeight = 10.sp
-//                    )
                     Text(
                         text = viewModel.post!!.account.acct,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 8.sp
+                    )
+
+                    Text(
+                        text = timeAgoText.value,
+                        fontSize = 12.sp,
+                        lineHeight = 8.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     if (viewModel.post!!.place != null) {
@@ -273,6 +283,7 @@ fun PostComposable(
                 }) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.ellipsis_vertical),
+                        modifier = Modifier.size(22.dp),
                         contentDescription = ""
                     )
                 }
@@ -283,7 +294,9 @@ fun PostComposable(
             if (viewModel.post!!.mediaAttachments.isNotEmpty()) {
                 if (viewModel.post!!.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
 
-                    Box(modifier.padding(start = 12.dp, end = 12.dp).clip(RoundedCornerShape(16.dp))) {
+                    Box(
+                        modifier.padding(start = 12.dp, end = 12.dp).clip(RoundedCornerShape(16.dp))
+                    ) {
                         val blurHashBitmap = BlurHashDecoder.decode(
                             viewModel.post!!.mediaAttachments[0].blurHash
                         )
@@ -327,8 +340,9 @@ fun PostComposable(
 
                 } else {
                     if (viewModel.post!!.mediaAttachments.count() > 1) {
-                        val smallestAspectRatio = viewModel.post!!.mediaAttachments
-                            .minByOrNull { it.meta?.original?.aspect ?: 1.0 }
+                        val smallestAspectRatio = viewModel.post!!.mediaAttachments.minByOrNull {
+                            it.meta?.original?.aspect ?: 1.0
+                        }
                         Box {
                             HorizontalPager(
                                 state = pagerState, modifier = Modifier.zIndex(50f).aspectRatio(
@@ -418,58 +432,75 @@ fun PostComposable(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (viewModel.post!!.favourited) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.heart),
-                                    modifier = Modifier.size(24.dp).clickable {
-                                        viewModel.unlikePost(postId, updatePost)
-                                    }.scale(heartScale),
-                                    contentDescription = "unlike post",
-                                    tint = Color(0xFFDD2E44)
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.heart_outline),
-                                    modifier = Modifier.size(24.dp).clickable {
-                                        animateHeart = true
-                                        viewModel.likePost(postId, updatePost)
-                                    },
-                                    contentDescription = "like post"
-                                )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clip(
+                                    RoundedCornerShape(percent = 50)
+                                ).background(MaterialTheme.colorScheme.surfaceContainer)
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                if (viewModel.post!!.favourited) {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.heart),
+                                        modifier = Modifier.size(22.dp).clickable {
+                                            viewModel.unlikePost(postId, updatePost)
+                                        }.scale(heartScale),
+                                        contentDescription = "unlike post",
+                                        tint = Color(0xFFDD2E44)
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.heart_outline),
+                                        modifier = Modifier.size(22.dp).clickable {
+                                            animateHeart = true
+                                            viewModel.likePost(postId, updatePost)
+                                        },
+                                        contentDescription = "like post"
+                                    )
 
+                                }
+
+                                Spacer(Modifier.width(4.dp))
+
+                                Text(
+                                    text = viewModel.post!!.favouritesCount.toString(),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
 
-                            Spacer(Modifier.width(4.dp))
-
-                            Text(
-                                text = viewModel.post!!.favouritesCount.toString(),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
 
                             Spacer(Modifier.width(32.dp))
 
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.chatbubble_outline),
-                                modifier = Modifier.size(24.dp).clickable {
-                                    viewModel.loadReplies(
-                                        postId
-                                    )
-                                    showBottomSheet = 1
-                                },
-                                contentDescription = "comments of post"
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clip(
+                                    RoundedCornerShape(percent = 50)
+                                ).background(MaterialTheme.colorScheme.surfaceContainer)
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.chatbubble_outline),
+                                    modifier = Modifier.size(22.dp).clickable {
+                                        viewModel.loadReplies(
+                                            postId
+                                        )
+                                        showBottomSheet = 1
+                                    },
+                                    contentDescription = "comments of post"
+                                )
 
-                            Spacer(Modifier.width(4.dp))
+                                Spacer(Modifier.width(4.dp))
 
-                            Text(
-                                text = viewModel.post!!.replyCount.toString(),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-
-
+                                Text(
+                                    text = viewModel.post!!.replyCount.toString(),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
 
                         Row {
@@ -586,12 +617,6 @@ fun PostComposable(
                                 showBottomSheet = 1
                             })
                     }
-
-                    Text(
-                        text = timeAgoText.value,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
                 }
             }
 
@@ -604,8 +629,7 @@ fun PostComposable(
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet = 0
-            },
-            sheetState = sheetState
+            }, sheetState = sheetState
         ) {
             if (showBottomSheet == 1) {
                 CommentsBottomSheet(post, navController, viewModel)
@@ -618,8 +642,7 @@ fun PostComposable(
                         post,
                         pagerState.currentPage,
                         navController,
-                        { showBottomSheet = 0 }
-                    )
+                        { showBottomSheet = 0 })
                 } else {
                     ShareBottomSheet(
                         post.url,
@@ -628,8 +651,7 @@ fun PostComposable(
                         post,
                         pagerState.currentPage,
                         navController,
-                        { showBottomSheet = 0 }
-                    )
+                        { showBottomSheet = 0 })
                 }
             } else if (showBottomSheet == 3) {
                 LikesBottomSheet(viewModel, navController)
@@ -844,8 +866,7 @@ fun MediaDialog(
         Box(
             modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f)).clickable {
                 closeDialog()
-            },
-            contentAlignment = Alignment.Center
+            }, contentAlignment = Alignment.Center
         ) {
             Box(modifier = Modifier.zIndex(2f).zoomable(zoomState).clickable { }) {
                 if (mediaAttachment.type != "video") {
