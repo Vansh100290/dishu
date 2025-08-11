@@ -65,8 +65,8 @@ fun InfinitePostsList(
                     0.dp
                 } else {
                     12.dp
-                }, bottom = contentPaddingBottom, start = 8.dp, end = 8.dp
-            ), modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+                }, bottom = contentPaddingBottom
+            )
         ) {
             postsCount?.let {
                 item {

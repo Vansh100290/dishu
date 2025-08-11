@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.own_profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -39,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +75,8 @@ fun OwnProfileComposable(
     val lazyGridState = rememberLazyListState()
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        CenterAlignedTopAppBar(title = {
+        CenterAlignedTopAppBar(
+            title = {
             Row(Modifier.clickable { showBottomSheet = 2 }) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -98,7 +102,8 @@ fun OwnProfileComposable(
                     imageVector = Icons.Outlined.MoreVert, contentDescription = "preferences"
                 )
             }
-        })
+        }
+        )
 
     }
 
@@ -106,27 +111,27 @@ fun OwnProfileComposable(
         PullToRefreshBox(
             isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
             onRefresh = { viewModel.loadData(true) },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer).padding(paddingValues)
         ) {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                state = lazyGridState
+                verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyGridState
             ) {
                 item {
-                    Column {
+                    Column(
+                        modifier = Modifier.clip(
+                            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                        ).background(MaterialTheme.colorScheme.surface)
+                            .padding(bottom = 12.dp)
+                    ) {
                         if (viewModel.accountState.account != null) {
-                            ProfileTopSection(account = viewModel.accountState.account,
+                            ProfileTopSection(
+                                account = viewModel.accountState.account,
                                 relationship = null,
                                 navController,
-                                openUrl = { url -> viewModel.openUrl(url) }
-                            )
+                                openUrl = { url -> viewModel.openUrl(url) })
 
                             Row(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 12.dp)
+                                Modifier.fillMaxWidth().padding(horizontal = 12.dp)
                             ) {
                                 Button(
                                     onClick = {
@@ -150,8 +155,7 @@ fun OwnProfileComposable(
                             getMoreCollections = {
                                 viewModel.accountState.account?.let {
                                     viewModel.getCollections(
-                                        it.id,
-                                        true
+                                        it.id, true
                                     )
                                 }
                             },
@@ -159,14 +163,14 @@ fun OwnProfileComposable(
                             addNewButton = PlatformFeatures.addCollection,
                             instanceDomain = viewModel.ownDomain,
                         ) { url -> viewModel.openUrl(url) }
-
-                        HorizontalDivider(Modifier.padding(bottom = 12.dp, top = 12.dp))
-
-                        SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
-                            ?: 0,
-                            viewType = viewModel.view,
-                            onViewChange = { viewModel.changeView(it) })
                     }
+                }
+
+                item {
+                    SwitchViewComposable(
+                        postsCount = viewModel.accountState.account?.postsCount ?: 0,
+                        viewType = viewModel.view,
+                        onViewChange = { viewModel.changeView(it) })
                 }
 
                 PostsWrapperComposable(
@@ -184,18 +188,6 @@ fun OwnProfileComposable(
                     updatePost = { viewModel.updatePost(it) },
                     navController = navController
                 )
-                /*PostsWrapperComposable(
-                    accountState = viewModel.accountState,
-                    postsState = viewModel.postsState,
-                    navController = navController,
-                    emptyState = EmptyState(
-                        icon = Icons.Outlined.Photo, heading = "No Posts"
-                    ),
-                    view = viewModel.view,
-                    postGetsDeleted = { viewModel.postGetsDeleted(it) },
-                    isFirstImageLarge = true
-                )*/
-
             }
 
             if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
@@ -217,12 +209,15 @@ fun OwnProfileComposable(
         ) {
             if (showBottomSheet == 1) {
                 val icon = viewModel.appIcon.collectAsState()
-                ModalBottomSheetContent(navController = navController,
+                ModalBottomSheetContent(
+                    navController = navController,
                     instanceDomain = viewModel.ownDomain,
                     appIcon = icon.value,
                     closeBottomSheet = {
                         showBottomSheet = 0
-                    }, openPreferencesDrawer)
+                    },
+                    openPreferencesDrawer
+                )
             } else if (showBottomSheet == 2) {
                 AccountSwitchBottomSheet(
                     navController = navController,

@@ -101,7 +101,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
             beyondViewportPageCount = 3,
             modifier = Modifier
                 .weight(1f)
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
         ) { tabIndex ->
             when (tabIndex) {
                 0 -> Box(modifier = Modifier.fillMaxSize()) {

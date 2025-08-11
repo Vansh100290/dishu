@@ -98,13 +98,12 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
         }) { paddingValues ->
 
         Column(
-            Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            Modifier.fillMaxSize().padding(paddingValues)
         ) {
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-                Tab(text = { Text(stringResource(Res.string.home)) },
+                Tab(
+                    text = { Text(stringResource(Res.string.home)) },
                     selected = pagerState.currentPage == 0,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -114,7 +113,8 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
                         }
                     })
 
-                Tab(text = { Text(stringResource(Res.string.local)) },
+                Tab(
+                    text = { Text(stringResource(Res.string.local)) },
                     selected = pagerState.currentPage == 1,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -124,7 +124,8 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
                         }
                     })
 
-                Tab(text = { Text(stringResource(Res.string.global)) },
+                Tab(
+                    text = { Text(stringResource(Res.string.global)) },
                     selected = pagerState.currentPage == 2,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -137,9 +138,8 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
             HorizontalPager(
                 state = pagerState,
                 beyondViewportPageCount = 3,
-                modifier = Modifier
-                    .weight(1f)
-                    .background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.weight(1f)
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
             ) { tabIndex ->
                 when (tabIndex) {
                     0 -> Box(modifier = Modifier.fillMaxSize()) {
@@ -161,13 +161,10 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
-            },
-            sheetState = sheetState
+            }, sheetState = sheetState
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp)
+                modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)
             ) {
                 Column {
                     Spacer(modifier = Modifier.height(18.dp))
