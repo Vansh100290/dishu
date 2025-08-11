@@ -20,8 +20,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Language
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -45,11 +46,9 @@ import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
 import pixelix.app.generated.resources.browsers_outline
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.code_slash_outline
 import pixelix.app.generated.resources.developed_by
 import pixelix.app.generated.resources.mastodon_logo
@@ -66,39 +65,34 @@ fun AboutPixelixComposable(
     val scrollState = rememberScrollState()
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(text = stringResource(Res.string.about_pixelix), fontWeight = FontWeight.Bold)
+        TopAppBar(title = {
+            Text(
+                text = stringResource(Res.string.about_pixelix),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline),
-                    contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         })
     }) { paddingValues ->
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(scrollState)
+            modifier = Modifier.padding(paddingValues).fillMaxSize().verticalScroll(scrollState)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 56.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 56.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val icon = viewModel.appIcon.collectAsState()
                 Image(
                     painterResource(icon.value),
                     contentDescription = null,
-                    Modifier
-                        .width(84.dp)
-                        .height(84.dp)
-                        .clip(CircleShape)
+                    Modifier.width(84.dp).height(84.dp).clip(CircleShape)
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -149,18 +143,14 @@ fun AboutPixelixComposable(
             Text(
                 text = stringResource(Res.string.developed_by),
                 fontSize = 18.sp,
-                modifier = Modifier
-                    .padding(12.dp, 0.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.padding(12.dp, 0.dp).fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 16.dp)
             ) {
                 Text(text = "Emanuel Hiebeler", fontWeight = FontWeight.Bold)
 
@@ -168,35 +158,27 @@ fun AboutPixelixComposable(
                     Image(
                         painter = painterResource(Res.drawable.pixelfed_logo),
                         contentDescription = null,
-                        Modifier
-                            .width(32.dp)
-                            .height(32.dp)
-                            .clickable {
-                                navController.navigate(Destination.ProfileByUsername("hiebeler05@pixelix.social"))
-                            })
+                        Modifier.width(32.dp).height(32.dp).clickable {
+                            navController.navigate(Destination.ProfileByUsername("hiebeler05@pixelix.social"))
+                        })
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Image(
                         painter = painterResource(Res.drawable.mastodon_logo),
                         contentDescription = null,
-                        Modifier
-                            .width(32.dp)
-                            .height(32.dp)
-                            .clickable {
-                                viewModel.openUrl("https://techhub.social/@Hiebeler05")
-                            })
+                        Modifier.width(32.dp).height(32.dp).clickable {
+                            viewModel.openUrl("https://techhub.social/@Hiebeler05")
+                        })
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Icon(
                         imageVector = Icons.Outlined.Language,
                         contentDescription = "",
-                        Modifier
-                            .size(32.dp)
-                            .clickable {
-                                viewModel.openUrl("https://emanuelhiebeler.me")
-                            },
+                        Modifier.size(32.dp).clickable {
+                            viewModel.openUrl("https://emanuelhiebeler.me")
+                        },
                         tint = Color(0xFF4793FF)
                     )
                 }
@@ -205,9 +187,7 @@ fun AboutPixelixComposable(
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 16.dp)
             ) {
                 Text(text = "Daniel Hiebeler", fontWeight = FontWeight.Bold)
 
@@ -215,35 +195,27 @@ fun AboutPixelixComposable(
                     Image(
                         painter = painterResource(Res.drawable.pixelfed_logo),
                         contentDescription = null,
-                        Modifier
-                            .width(32.dp)
-                            .height(32.dp)
-                            .clickable {
-                                navController.navigate(Destination.ProfileByUsername("daniebeler@pixelix.social"))
-                            })
+                        Modifier.width(32.dp).height(32.dp).clickable {
+                            navController.navigate(Destination.ProfileByUsername("daniebeler@pixelix.social"))
+                        })
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Image(
                         painter = painterResource(Res.drawable.mastodon_logo),
                         contentDescription = null,
-                        Modifier
-                            .width(32.dp)
-                            .height(32.dp)
-                            .clickable {
-                                viewModel.openUrl("https://techhub.social/@daniebeler")
-                            })
+                        Modifier.width(32.dp).height(32.dp).clickable {
+                            viewModel.openUrl("https://techhub.social/@daniebeler")
+                        })
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Icon(
                         imageVector = Icons.Outlined.Language,
                         contentDescription = "",
-                        Modifier
-                            .size(32.dp)
-                            .clickable {
-                                viewModel.openUrl("https://daniebeler.com")
-                            },
+                        Modifier.size(32.dp).clickable {
+                            viewModel.openUrl("https://daniebeler.com")
+                        },
                         tint = Color(0xFF4793FF)
                     )
                 }
@@ -252,9 +224,7 @@ fun AboutPixelixComposable(
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 16.dp)
             ) {
                 Text(text = "Konstantin Tskhovrebov", fontWeight = FontWeight.Bold)
 
@@ -262,35 +232,27 @@ fun AboutPixelixComposable(
                     Image(
                         painter = painterResource(Res.drawable.pixelfed_logo),
                         contentDescription = null,
-                        Modifier
-                            .width(32.dp)
-                            .height(32.dp)
-                            .clickable {
-                                navController.navigate(Destination.ProfileByUsername("dagboek@pixey.org"))
-                            })
+                        Modifier.width(32.dp).height(32.dp).clickable {
+                            navController.navigate(Destination.ProfileByUsername("dagboek@pixey.org"))
+                        })
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Image(
                         painter = painterResource(Res.drawable.mastodon_logo),
                         contentDescription = null,
-                        Modifier
-                            .width(32.dp)
-                            .height(32.dp)
-                            .clickable {
-                                viewModel.openUrl("https://androiddev.social/@terrakok")
-                            })
+                        Modifier.width(32.dp).height(32.dp).clickable {
+                            viewModel.openUrl("https://androiddev.social/@terrakok")
+                        })
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Icon(
                         imageVector = Icons.Outlined.Language,
                         contentDescription = "",
-                        Modifier
-                            .size(32.dp)
-                            .clickable {
-                                viewModel.openUrl("https://github.com/terrakok")
-                            },
+                        Modifier.size(32.dp).clickable {
+                            viewModel.openUrl("https://github.com/terrakok")
+                        },
                         tint = Color(0xFF4793FF)
                     )
                 }

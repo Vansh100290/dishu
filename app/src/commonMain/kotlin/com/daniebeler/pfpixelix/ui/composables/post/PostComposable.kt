@@ -13,16 +13,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -77,7 +74,6 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
-import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -110,14 +106,12 @@ import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.heart_outline
 import pixelix.app.generated.resources.liked_by
 import pixelix.app.generated.resources.media_description
-import pixelix.app.generated.resources.no_likes_yet
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.others
 import pixelix.app.generated.resources.reblogged_by
 import pixelix.app.generated.resources.sync_outline
 import pixelix.app.generated.resources.sync_outline_bold
 import pixelix.app.generated.resources.this_action_cannot_be_undone
-import pixelix.app.generated.resources.view_comments
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -431,7 +425,6 @@ fun PostComposable(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -473,7 +466,7 @@ fun PostComposable(
                             }
 
 
-                            Spacer(Modifier.width(32.dp))
+                            Spacer(Modifier.width(16.dp))
 
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -504,7 +497,6 @@ fun PostComposable(
                         }
 
                         Row {
-
                             if (viewModel.post!!.reblogged) {
                                 IconButton(onClick = {
                                     viewModel.unreblogPost(postId, updatePost)
@@ -580,10 +572,6 @@ fun PostComposable(
                                         showBottomSheet = 3
                                     })
                             }
-                        } else {
-                            Text(
-                                text = stringResource(Res.string.no_likes_yet), fontSize = 14.sp
-                            )
                         }
                     }
 
@@ -599,23 +587,6 @@ fun PostComposable(
                                 maximumLines = 4
                             )
                         }
-                    }
-
-                    if (viewModel.post!!.replyCount > 0 && showReplies) {
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        Text(
-                            text = stringResource(
-                                Res.string.view_comments, viewModel.post!!.replyCount
-                            ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.clickable {
-                                viewModel.loadReplies(
-                                    postId
-                                )
-                                showBottomSheet = 1
-                            })
                     }
                 }
             }

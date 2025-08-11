@@ -17,13 +17,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,10 +42,8 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.admin
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.instance_version
 import pixelix.app.generated.resources.posts
@@ -62,14 +62,14 @@ fun AboutInstanceComposable(
 
     val lazyListState = rememberLazyListState()
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(text = viewModel.ownInstanceDomain, fontWeight = FontWeight.Bold)
+        TopAppBar(title = {
+            Text(text = viewModel.ownInstanceDomain, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         })
@@ -131,21 +131,17 @@ fun AboutInstanceComposable(
                             modifier = Modifier.padding(12.dp, 0.dp)
                         )
 
-                        Row(modifier = Modifier
-                            .clickable {
+                        Row(
+                            modifier = Modifier.clickable {
                                 navController.navigate(Destination.Profile(account.id))
-                            }
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                            .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically) {
+                            }.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             AsyncImage(
                                 model = account.avatar,
                                 error = painterResource(Res.drawable.default_avatar),
                                 contentDescription = "",
-                                modifier = Modifier
-                                    .height(46.dp)
-                                    .width(46.dp)
-                                    .clip(CircleShape)
+                                modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape)
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Column {
@@ -157,20 +153,19 @@ fun AboutInstanceComposable(
                         }
                     }
 
-                Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
-                Text(
-                    text = stringResource(Res.string.privacy_policy),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(12.dp, 0.dp)
-                )
+                    Text(
+                        text = stringResource(Res.string.privacy_policy),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(12.dp, 0.dp)
+                    )
 
-                Text(text = "https://" + viewModel.instanceState.instance?.domain + "/site/privacy",
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .padding(12.dp, 0.dp)
-                        .clickable {
+                    Text(
+                        text = "https://" + viewModel.instanceState.instance?.domain + "/site/privacy",
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(12.dp, 0.dp).clickable {
                             if (viewModel.instanceState.instance != null) {
                                 viewModel.openUrl(
                                     url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy"
@@ -179,21 +174,20 @@ fun AboutInstanceComposable(
                         })
 
 
-                Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
 
-                Text(
-                    text = stringResource(Res.string.terms_of_use),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(12.dp, 0.dp)
-                )
+                    Text(
+                        text = stringResource(Res.string.terms_of_use),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(12.dp, 0.dp)
+                    )
 
-                Text(text = "https://" + viewModel.instanceState.instance?.domain + "/site/terms",
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .padding(12.dp, 0.dp)
-                        .clickable {
+                    Text(
+                        text = "https://" + viewModel.instanceState.instance?.domain + "/site/terms",
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(12.dp, 0.dp).clickable {
                             if (viewModel.instanceState.instance != null) {
                                 viewModel.openUrl(
                                     url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms"
@@ -202,56 +196,56 @@ fun AboutInstanceComposable(
                         })
 
 
-                Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
-                Text(
-                    text = stringResource(Res.string.rules),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(12.dp, 0.dp)
-                )
-            }
-
-            items(viewModel.instanceState.instance?.rules ?: emptyList()) {
-                Row(modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)) {
                     Text(
-                        text = it.id,
-                        fontSize = 24.sp,
+                        text = stringResource(Res.string.rules),
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(12.dp, 0.dp)
                     )
-                    Spacer(modifier = Modifier.width(18.dp))
-                    Text(text = it.text)
+                }
+
+                items(viewModel.instanceState.instance?.rules ?: emptyList()) {
+                    Row(modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)) {
+                        Text(
+                            text = it.id,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(18.dp))
+                        Text(text = it.text)
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Text(
+                        text = stringResource(Res.string.instance_version),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(12.dp, 0.dp)
+                    )
+
+                    Text(
+                        text = viewModel.instanceState.instance?.version ?: "",
+                        modifier = Modifier.padding(12.dp, 0.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
 
-            item {
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Text(
-                    text = stringResource(Res.string.instance_version),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(12.dp, 0.dp)
-                )
-
-                Text(
-                    text = viewModel.instanceState.instance?.version ?: "",
-                    modifier = Modifier.padding(12.dp, 0.dp)
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-            }
         }
 
-    }
+        if (viewModel.instanceState.isLoading) {
+            FullscreenLoadingComposable()
+        }
 
-    if (viewModel.instanceState.isLoading) {
-        FullscreenLoadingComposable()
+        if (viewModel.instanceState.error.isNotBlank()) {
+            FullscreenErrorComposable(message = viewModel.instanceState.error)
+        }
     }
-
-    if (viewModel.instanceState.error.isNotBlank()) {
-        FullscreenErrorComposable(message = viewModel.instanceState.error)
-    }
-}
 }

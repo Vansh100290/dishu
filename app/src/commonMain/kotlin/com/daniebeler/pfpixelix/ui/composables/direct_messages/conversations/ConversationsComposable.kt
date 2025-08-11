@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -47,6 +50,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
@@ -86,41 +90,46 @@ fun ConversationsComposable(
 
     val lazyListState = rememberLazyListState()
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), floatingActionButton = {
-        FloatingActionButton(onClick = {
-            showNewChatDialog.value = true
-        }) {
-            Icon(vectorResource(Res.drawable.add_outline), contentDescription = "Add")
-        }
-
-    }, topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(stringResource(Res.string.conversations), fontWeight = FontWeight.Bold)
-
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                showNewChatDialog.value = true
             }) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
-                )
+                Icon(vectorResource(Res.drawable.add_outline), contentDescription = "Add")
             }
-        }, actions = {
-            IconButton(onClick = { showBottomSheet = true }) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.help_outline),
-                    tint = MaterialTheme.colorScheme.error,
-                    contentDescription = null
+
+        },
+        topBar = {
+            TopAppBar(title = {
+                Text(
+                    stringResource(Res.string.conversations),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
-            }
-        })
-    }) { paddingValues ->
+
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    )
+                }
+            }, actions = {
+                IconButton(onClick = { showBottomSheet = true }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.help_outline),
+                        tint = MaterialTheme.colorScheme.error,
+                        contentDescription = null
+                    )
+                }
+            })
+        }) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = viewModel.conversationsState.isRefreshing,
             onRefresh = { viewModel.refresh() },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
             LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize(), content = {
                 if (viewModel.conversationsState.conversations.isNotEmpty()) {
@@ -135,9 +144,7 @@ fun ConversationsComposable(
                     if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
                         item {
                             CircularProgressIndicator(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(80.dp)
+                                modifier = Modifier.fillMaxWidth().height(80.dp)
                                     .wrapContentSize(Alignment.Center)
                             )
                         }
@@ -175,13 +182,10 @@ fun ConversationsComposable(
             ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
-                },
-                sheetState = sheetState
+                }, sheetState = sheetState
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
                 ) {
                     Column {
                         Spacer(modifier = Modifier.height(18.dp))
@@ -228,25 +232,21 @@ private fun CreateNewConversation(
             )
             if (viewModel.newConversationState.suggestions.isNotEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .clip(shape = RoundedCornerShape(12.dp))
+                    modifier = Modifier.padding(top = 4.dp).clip(shape = RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
                     Column(
                         modifier = Modifier.padding(12.dp)
                     ) {
                         viewModel.newConversationState.suggestions.map {
-                            Box(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .clickable {
-                                    viewModel.newConversationUsername = TextFieldValue(
-                                        it.acct, selection = TextRange(it.acct.length)
-                                    )
-                                    viewModel.newConversationSelectedAccount = it
-                                    viewModel.newConversationState = NewConversationState()
-                                }) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().padding(8.dp).clickable {
+                                        viewModel.newConversationUsername = TextFieldValue(
+                                            it.acct, selection = TextRange(it.acct.length)
+                                        )
+                                        viewModel.newConversationSelectedAccount = it
+                                        viewModel.newConversationState = NewConversationState()
+                                    }) {
                                 Text(
                                     text = "@${it.acct}",
                                     color = MaterialTheme.colorScheme.onBackground

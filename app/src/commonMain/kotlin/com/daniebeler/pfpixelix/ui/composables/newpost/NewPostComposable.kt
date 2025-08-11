@@ -52,6 +52,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,6 +67,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
@@ -121,8 +123,8 @@ fun NewPostComposable(
     }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold)
+        TopAppBar(title = {
+            Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold, fontSize = 18.sp)
         }, actions = {
             Button(
                 onClick = { showReleaseAlert = true },

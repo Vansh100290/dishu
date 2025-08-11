@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import org.jetbrains.compose.resources.DrawableResource
@@ -66,33 +70,28 @@ fun IconSelectionComposable(
     val (newIcon, setNewIcon) = remember { mutableStateOf<DrawableResource?>(null) }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text("Icon Selection", fontWeight = FontWeight.Bold)
+        TopAppBar(title = {
+            Text("Icon Selection", fontWeight = FontWeight.Bold, fontSize = 18.sp)
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline),
-                    contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         })
 
     }) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
 
             val selectedIcon = viewModel.selectedIcon.collectAsState()
             LazyVerticalGrid(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp),
+                modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
                 state = lazyGridState,
                 columns = GridCells.Fixed(3)
             ) {
@@ -101,21 +100,15 @@ fun IconSelectionComposable(
                         painterResource(icon),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .clip(CircleShape)
-                            .let {
+                        modifier = Modifier.padding(6.dp).fillMaxWidth().aspectRatio(1f)
+                            .clip(CircleShape).let {
                                 if (selectedIcon.value == icon) {
                                     it.border(
                                         BorderStroke(4.dp, MaterialTheme.colorScheme.primary),
                                         shape = CircleShape
                                     )
                                 } else it
-                            }
-                            .clickable { setNewIcon(icon) }
-                    )
+                            }.clickable { setNewIcon(icon) })
 
                 }
             }

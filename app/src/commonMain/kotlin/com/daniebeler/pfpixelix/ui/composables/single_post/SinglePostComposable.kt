@@ -10,15 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -29,10 +30,8 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.by
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.post
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,10 +57,12 @@ fun SinglePostComposable(
     }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        CenterAlignedTopAppBar(title = {
-            Column (horizontalAlignment = Alignment.CenterHorizontally) {
+        TopAppBar(title = {
+            Column {
                 Text(
-                    text = stringResource(Res.string.post), fontWeight = FontWeight.Bold
+                    text = stringResource(Res.string.post),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
                 Text(
                     text = stringResource(
@@ -74,24 +75,23 @@ fun SinglePostComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         })
     }) { paddingValues ->
         Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+            modifier = Modifier.padding(paddingValues).fillMaxSize()
         ) {
             Column(modifier = Modifier.verticalScroll(scrollState)) {
                 if (viewModel.postState.post != null) {
-                    PostComposable(viewModel.postState.post!!, navController, postGetsDeleted = {
+                    PostComposable(
+                        viewModel.postState.post!!, navController, postGetsDeleted = {
                         navController.navigate(Destination.OwnProfile) {
                             popUpTo(0) { inclusive = true }
                         }
-                    },
-                        setZindex = { }, openReplies)
+                    }, setZindex = { }, openReplies
+                    )
                 }
             }
 

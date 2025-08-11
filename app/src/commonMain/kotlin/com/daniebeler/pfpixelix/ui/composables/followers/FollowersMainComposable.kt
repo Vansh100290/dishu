@@ -13,7 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,11 +23,11 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
@@ -35,9 +36,7 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.followers
 import pixelix.app.generated.resources.following
 
@@ -65,14 +64,16 @@ fun FollowersMainComposable(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(title = {
-                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+            TopAppBar(title = {
+                Column {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
                     Text(
                         text = viewModel.accountState.account?.url?.substringAfter("https://")
@@ -84,30 +85,29 @@ fun FollowersMainComposable(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                     )
                 }
             })
 
         }) { paddingValues ->
         Column(
-            Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            Modifier.fillMaxSize().padding(paddingValues)
         ) {
 
             PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-                Tab(text = {
-                    if (viewModel.accountState.account != null) {
-                        Text(
-                            viewModel.accountState.account?.followersCount.toString() + " " + stringResource(
-                                Res.string.followers
+                Tab(
+                    text = {
+                        if (viewModel.accountState.account != null) {
+                            Text(
+                                viewModel.accountState.account?.followersCount.toString() + " " + stringResource(
+                                    Res.string.followers
+                                )
                             )
-                        )
-                    } else {
-                        Text(text = stringResource(Res.string.followers))
-                    }
-                },
+                        } else {
+                            Text(text = stringResource(Res.string.followers))
+                        }
+                    },
                     selected = pagerState.currentPage == 0,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -117,17 +117,18 @@ fun FollowersMainComposable(
                         }
                     })
 
-                Tab(text = {
-                    if (viewModel.accountState.account != null) {
-                        Text(
-                            viewModel.accountState.account?.followingCount.toString() + " " + stringResource(
-                                Res.string.following
+                Tab(
+                    text = {
+                        if (viewModel.accountState.account != null) {
+                            Text(
+                                viewModel.accountState.account?.followingCount.toString() + " " + stringResource(
+                                    Res.string.following
+                                )
                             )
-                        )
-                    } else {
-                        Text(text = stringResource(Res.string.following))
-                    }
-                },
+                        } else {
+                            Text(text = stringResource(Res.string.following))
+                        }
+                    },
                     selected = pagerState.currentPage == 1,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
@@ -140,9 +141,7 @@ fun FollowersMainComposable(
 
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier
-                    .weight(1f)
-                    .background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.weight(1f).background(MaterialTheme.colorScheme.background)
             ) { tabIndex ->
                 when (tabIndex) {
                     0 -> Box(modifier = Modifier.fillMaxSize()) {

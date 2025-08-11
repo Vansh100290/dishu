@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -7,23 +8,22 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.FollowButton
@@ -43,18 +43,15 @@ fun HashtagTimelineComposable(
         viewModel.getRelatedHashtags(hashtag)
     }
 
-    val lazyGridState = rememberLazyListState()
-
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         topBar = {
-            CenterAlignedTopAppBar(scrollBehavior = scrollBehavior, title = {
+            TopAppBar(title = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "#$hashtag",
                         fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
@@ -69,7 +66,8 @@ fun HashtagTimelineComposable(
                     )
                 }
             }, actions = {
-                FollowButton(firstLoaded = viewModel.hashtagState.hashtag != null,
+                FollowButton(
+                    firstLoaded = viewModel.hashtagState.hashtag != null,
                     isLoading = viewModel.hashtagState.isLoading,
                     isFollowing = viewModel.hashtagState.hashtag?.following ?: false,
                     onFollowClick = { viewModel.followHashtag(viewModel.hashtagState.hashtag!!.name) },
@@ -77,7 +75,10 @@ fun HashtagTimelineComposable(
             })
 
         }) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+        Box(
+            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+                .padding(paddingValues)
+        ) {
             InfinitePostsList(
                 items = viewModel.postsState.hashtagTimeline,
                 isLoading = viewModel.postsState.isLoading,
@@ -92,8 +93,7 @@ fun HashtagTimelineComposable(
                 onRefresh = { viewModel.refresh() },
                 postsCount = viewModel.hashtagState.hashtag?.count ?: 0,
                 navController = navController,
-                postGetsUpdated = { viewModel.postGetsUpdated(it) }
-            )
+                postGetsUpdated = { viewModel.postGetsUpdated(it) })
         }
     }
 }

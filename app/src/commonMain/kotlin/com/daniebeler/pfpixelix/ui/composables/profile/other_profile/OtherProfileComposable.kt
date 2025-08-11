@@ -19,14 +19,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -37,6 +36,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -46,7 +46,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -70,7 +69,6 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.block
 import pixelix.app.generated.resources.block_account
@@ -87,7 +85,6 @@ import pixelix.app.generated.resources.block_consequence_9
 import pixelix.app.generated.resources.block_this_profile
 import pixelix.app.generated.resources.browsers_outline
 import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.follow
 import pixelix.app.generated.resources.message
@@ -111,8 +108,8 @@ import pixelix.app.generated.resources.unmute_account
 import pixelix.app.generated.resources.unmute_caps
 import pixelix.app.generated.resources.unmute_this_profile
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
-    ExperimentalComposeUiApi::class
+@OptIn(
+    ExperimentalMaterial3Api::class
 )
 @Composable
 fun OtherProfileComposable(
@@ -141,12 +138,13 @@ fun OtherProfileComposable(
 
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        CenterAlignedTopAppBar(title = {
+        TopAppBar(title = {
             Row {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
                     Text(
                         text = viewModel.domain, fontSize = 12.sp, lineHeight = 6.sp
@@ -159,7 +157,7 @@ fun OtherProfileComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         }, actions = {
@@ -180,22 +178,20 @@ fun OtherProfileComposable(
         })
 
     }) { paddingValues ->
-        PullToRefreshBox (
+        PullToRefreshBox(
             isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
             onRefresh = { viewModel.loadData(userId, true, navController) },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
 
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                state = lazyGridState
+                verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyGridState
             ) {
                 item {
                     Column {
                         if (viewModel.accountState.account != null) {
-                            ProfileTopSection(account = viewModel.accountState.account,
+                            ProfileTopSection(
+                                account = viewModel.accountState.account,
                                 relationship = viewModel.relationshipState.accountRelationship,
                                 navController,
                                 openUrl = { url ->
@@ -209,9 +205,7 @@ fun OtherProfileComposable(
                         )
 
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp)
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
                         ) {
                             var containerColor by remember {
                                 mutableStateOf(Color(0xFFFFFFFF))
@@ -280,8 +274,9 @@ fun OtherProfileComposable(
                         }
 
                         viewModel.accountState.account?.let { account ->
-                            CollectionsComposable(collectionsState = viewModel.collectionsState,
-                                getMoreCollections = {viewModel.getCollections(account.id, true)},
+                            CollectionsComposable(
+                                collectionsState = viewModel.collectionsState,
+                                getMoreCollections = { viewModel.getCollections(account.id, true) },
                                 navController = navController,
                                 instanceDomain = viewModel.domain,
                                 openUrl = { url -> viewModel.openUrl(url) })
@@ -289,8 +284,8 @@ fun OtherProfileComposable(
 
                         HorizontalDivider(Modifier.padding(bottom = 12.dp, top = 12.dp))
 
-                        SwitchViewComposable(postsCount = viewModel.accountState.account?.postsCount
-                            ?: 0,
+                        SwitchViewComposable(
+                            postsCount = viewModel.accountState.account?.postsCount ?: 0,
                             viewType = viewModel.view,
                             onViewChange = {
                                 viewModel.changeView(it)
@@ -329,7 +324,8 @@ fun OtherProfileComposable(
         }
     }
 
-    ToTopButton(listState = lazyGridState, refresh = {viewModel.loadData(userId, true, navController)})
+    ToTopButton(
+        listState = lazyGridState, refresh = { viewModel.loadData(userId, true, navController) })
 
     InfiniteListHandler(lazyListState = lazyGridState) {
         viewModel.getPostsPaginated(viewModel.userId)
@@ -346,47 +342,49 @@ fun OtherProfileComposable(
             ) {
                 if (viewModel.relationshipState.accountRelationship != null) {
                     if (viewModel.relationshipState.accountRelationship!!.muting) {
-                        ButtonRowElement(icon = Res.drawable.remove_circle_outline,
-                            text = stringResource(
+                        ButtonRowElement(
+                            icon = Res.drawable.remove_circle_outline, text = stringResource(
                                 Res.string.unmute_this_profile
-                            ),
-                            onClick = {
+                            ), onClick = {
                                 showUnMuteAlert = true
                             })
                     } else {
-                        ButtonRowElement(icon = Res.drawable.remove_circle_outline,
-                            text = stringResource(
+                        ButtonRowElement(
+                            icon = Res.drawable.remove_circle_outline, text = stringResource(
                                 Res.string.mute_this_profile
-                            ),
-                            onClick = {
+                            ), onClick = {
                                 showMuteAlert = true
                             })
                     }
 
                     if (viewModel.relationshipState.accountRelationship!!.blocking) {
-                        ButtonRowElement(icon = Res.drawable.remove_circle_outline, text = stringResource(
-                            Res.string.unblock_this_profile
-                        ), onClick = {
-                            showUnBlockAlert = true
-                        })
+                        ButtonRowElement(
+                            icon = Res.drawable.remove_circle_outline, text = stringResource(
+                                Res.string.unblock_this_profile
+                            ), onClick = {
+                                showUnBlockAlert = true
+                            })
                     } else {
-                        ButtonRowElement(icon = Res.drawable.remove_circle_outline, text = stringResource(
-                            Res.string.block_this_profile
-                        ), onClick = {
-                            showBlockAlert = true
-                        })
+                        ButtonRowElement(
+                            icon = Res.drawable.remove_circle_outline, text = stringResource(
+                                Res.string.block_this_profile
+                            ), onClick = {
+                                showBlockAlert = true
+                            })
                     }
                 }
 
                 HorizontalDivider(Modifier.padding(12.dp))
 
-                ButtonRowElement(icon = Res.drawable.browsers_outline, text = stringResource(
-                    Res.string.open_in_browser
-                ), onClick = {
-                    viewModel.openUrl(viewModel.accountState.account!!.url)
-                })
+                ButtonRowElement(
+                    icon = Res.drawable.browsers_outline, text = stringResource(
+                        Res.string.open_in_browser
+                    ), onClick = {
+                        viewModel.openUrl(viewModel.accountState.account!!.url)
+                    })
 
-                ButtonRowElement(icon = Res.drawable.share_social_outline,
+                ButtonRowElement(
+                    icon = Res.drawable.share_social_outline,
                     text = stringResource(Res.string.share_this_profile),
                     onClick = {
                         viewModel.shareAccountUrl()
@@ -396,31 +394,35 @@ fun OtherProfileComposable(
     }
 
     if (showUnMuteAlert) {
-        UnMuteAccountAlert(onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
-            showUnMuteAlert = false
-            viewModel.unMuteAccount(viewModel.userId)
-        }, account = viewModel.accountState.account!!
+        UnMuteAccountAlert(
+            onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
+                showUnMuteAlert = false
+                viewModel.unMuteAccount(viewModel.userId)
+            }, account = viewModel.accountState.account!!
         )
     }
     if (showMuteAlert) {
-        MuteAccountAlert(onDismissRequest = { showMuteAlert = false }, onConfirmation = {
-            showMuteAlert = false
-            viewModel.muteAccount(viewModel.userId)
-        }, account = viewModel.accountState.account!!
+        MuteAccountAlert(
+            onDismissRequest = { showMuteAlert = false }, onConfirmation = {
+                showMuteAlert = false
+                viewModel.muteAccount(viewModel.userId)
+            }, account = viewModel.accountState.account!!
         )
     }
     if (showBlockAlert) {
-        BlockAccountAlert(onDismissRequest = { showBlockAlert = false }, onConfirmation = {
-            showBlockAlert = false
-            viewModel.blockAccount(viewModel.userId)
-        }, account = viewModel.accountState.account!!
+        BlockAccountAlert(
+            onDismissRequest = { showBlockAlert = false }, onConfirmation = {
+                showBlockAlert = false
+                viewModel.blockAccount(viewModel.userId)
+            }, account = viewModel.accountState.account!!
         )
     }
     if (showUnBlockAlert) {
-        UnBlockAccountAlert(onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
-            showUnBlockAlert = false
-            viewModel.unblockAccount(viewModel.userId)
-        }, account = viewModel.accountState.account!!
+        UnBlockAccountAlert(
+            onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
+                showUnBlockAlert = false
+                viewModel.unblockAccount(viewModel.userId)
+            }, account = viewModel.accountState.account!!
         )
     }
 }
@@ -574,10 +576,7 @@ fun AlertTopSection(account: Account) {
             model = account.avatar,
             error = painterResource(Res.drawable.default_avatar),
             contentDescription = "",
-            modifier = Modifier
-                .height(46.dp)
-                .width(46.dp)
-                .clip(CircleShape)
+            modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(10.dp))
         Column {

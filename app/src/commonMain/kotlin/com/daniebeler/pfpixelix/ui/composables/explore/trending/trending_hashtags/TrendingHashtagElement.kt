@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,8 @@ fun TrendingHashtagElement(
 
     Column(
         Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
