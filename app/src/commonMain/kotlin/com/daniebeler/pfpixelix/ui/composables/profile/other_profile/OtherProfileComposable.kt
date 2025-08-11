@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -181,14 +182,19 @@ fun OtherProfileComposable(
         PullToRefreshBox(
             isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
             onRefresh = { viewModel.loadData(userId, true, navController) },
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)
+                .padding(paddingValues)
         ) {
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyGridState
             ) {
                 item {
-                    Column {
+                    Column(
+                        modifier = Modifier.clip(
+                            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                        ).background(MaterialTheme.colorScheme.surface).padding(bottom = 12.dp)
+                    ) {
                         if (viewModel.accountState.account != null) {
                             ProfileTopSection(
                                 account = viewModel.accountState.account,
@@ -281,16 +287,16 @@ fun OtherProfileComposable(
                                 instanceDomain = viewModel.domain,
                                 openUrl = { url -> viewModel.openUrl(url) })
                         }
-
-                        HorizontalDivider(Modifier.padding(bottom = 12.dp, top = 12.dp))
-
-                        SwitchViewComposable(
-                            postsCount = viewModel.accountState.account?.postsCount ?: 0,
-                            viewType = viewModel.view,
-                            onViewChange = {
-                                viewModel.changeView(it)
-                            })
                     }
+                }
+
+                item {
+                    SwitchViewComposable(
+                        postsCount = viewModel.accountState.account?.postsCount ?: 0,
+                        viewType = viewModel.view,
+                        onViewChange = {
+                            viewModel.changeView(it)
+                        })
                 }
 
                 PostsWrapperComposable(
@@ -396,33 +402,33 @@ fun OtherProfileComposable(
     if (showUnMuteAlert) {
         UnMuteAccountAlert(
             onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
-                showUnMuteAlert = false
-                viewModel.unMuteAccount(viewModel.userId)
-            }, account = viewModel.accountState.account!!
+            showUnMuteAlert = false
+            viewModel.unMuteAccount(viewModel.userId)
+        }, account = viewModel.accountState.account!!
         )
     }
     if (showMuteAlert) {
         MuteAccountAlert(
             onDismissRequest = { showMuteAlert = false }, onConfirmation = {
-                showMuteAlert = false
-                viewModel.muteAccount(viewModel.userId)
-            }, account = viewModel.accountState.account!!
+            showMuteAlert = false
+            viewModel.muteAccount(viewModel.userId)
+        }, account = viewModel.accountState.account!!
         )
     }
     if (showBlockAlert) {
         BlockAccountAlert(
             onDismissRequest = { showBlockAlert = false }, onConfirmation = {
-                showBlockAlert = false
-                viewModel.blockAccount(viewModel.userId)
-            }, account = viewModel.accountState.account!!
+            showBlockAlert = false
+            viewModel.blockAccount(viewModel.userId)
+        }, account = viewModel.accountState.account!!
         )
     }
     if (showUnBlockAlert) {
         UnBlockAccountAlert(
             onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
-                showUnBlockAlert = false
-                viewModel.unblockAccount(viewModel.userId)
-            }, account = viewModel.accountState.account!!
+            showUnBlockAlert = false
+            viewModel.unblockAccount(viewModel.userId)
+        }, account = viewModel.accountState.account!!
         )
     }
 }
