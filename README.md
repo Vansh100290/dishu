@@ -37,6 +37,14 @@ You can view the release download statistics here on [GitHub Release Stats](http
 
 <br>
 
+## License
+
+Pixelix is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+
+See the [LICENSE](./LICENSE) file for details.
+
+<br>
+
 ## 👻 A Ghostbyte Production
 
 ![Ghostbyte banner](https://github.com/ghostbyte-dev/ghostbyte-website/blob/53ed21675d8306f4c6885ae0653b2805ee5b2e06/assets/ghostbyte_banner.png)
