@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -35,7 +36,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -47,11 +47,9 @@ import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.by
 import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.open_outline
@@ -82,7 +80,9 @@ fun CollectionComposable(
                     TextField(
                         value = viewModel.editState.name,
                         singleLine = true,
-                        onValueChange = { viewModel.editState = viewModel.editState.copy(name = it) },
+                        onValueChange = {
+                            viewModel.editState = viewModel.editState.copy(name = it)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
                         colors = TextFieldDefaults.colors(
@@ -93,9 +93,11 @@ fun CollectionComposable(
                         )
                     )
                 } else {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column {
                         Text(
-                            viewModel.collectionState.collection!!.title, fontWeight = FontWeight.Bold, fontSize = 18.sp
+                            viewModel.collectionState.collection!!.title,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
                         Text(
                             stringResource(
@@ -110,7 +112,7 @@ fun CollectionComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         }, actions = {
@@ -151,15 +153,14 @@ fun CollectionComposable(
         })
     }) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
-            InfinitePostsGrid(items = if (viewModel.editState.editMode) {
-                viewModel.editState.editPosts
-            } else {
-                viewModel.collectionPostsState.posts
-            },
+            InfinitePostsGrid(
+                items = if (viewModel.editState.editMode) {
+                    viewModel.editState.editPosts
+                } else {
+                    viewModel.collectionPostsState.posts
+                },
                 isLoading = viewModel.collectionPostsState.isLoading,
                 isRefreshing = viewModel.collectionPostsState.isRefreshing,
                 error = viewModel.collectionPostsState.error,
@@ -197,25 +198,25 @@ fun CollectionComposable(
             ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
-                },
-                sheetState = sheetState
+                }, sheetState = sheetState
             ) {
                 Column(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
 
-                    ButtonRowElement(icon = Res.drawable.open_outline, text = stringResource(
-                        Res.string.open_in_browser
-                    ), onClick = {
-                        if (viewModel.collectionState.collection != null) {
-                            viewModel.openUrl(viewModel.collectionState.collection!!.url)
-                        }
-                    })
+                    ButtonRowElement(
+                        icon = Res.drawable.open_outline, text = stringResource(
+                            Res.string.open_in_browser
+                        ), onClick = {
+                            if (viewModel.collectionState.collection != null) {
+                                viewModel.openUrl(viewModel.collectionState.collection!!.url)
+                            }
+                        })
 
-                    ButtonRowElement(icon = Res.drawable.share_social_outline,
+                    ButtonRowElement(
+                        icon = Res.drawable.share_social_outline,
                         text = stringResource(Res.string.share_this_collection),
-                        onClick = { viewModel.shareCollectionUrl() }
-                    )
+                        onClick = { viewModel.shareCollectionUrl() })
                 }
 
             }
@@ -225,13 +226,13 @@ fun CollectionComposable(
             ModalBottomSheet(
                 onDismissRequest = {
                     showAddPostBottomSheet = false
-                },
-                sheetState = showAddPostBottomSheetState
+                }, sheetState = showAddPostBottomSheetState
             ) {
                 Column(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
-                    InfinitePostsGrid(items = viewModel.editState.allPostsExceptCollection,
+                    InfinitePostsGrid(
+                        items = viewModel.editState.allPostsExceptCollection,
                         isLoading = viewModel.editState.isLoading,
                         isRefreshing = false,
                         error = viewModel.editState.error,
@@ -244,7 +245,9 @@ fun CollectionComposable(
                         },
                         onRefresh = {
                             viewModel.refresh()
-                        }, onClick = { viewModel.addPostToCollection(it) }, pullToRefresh = false
+                        },
+                        onClick = { viewModel.addPostToCollection(it) },
+                        pullToRefresh = false
                     )
                 }
             }
