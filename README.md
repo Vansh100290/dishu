@@ -1,3 +1,5 @@
+# Pixelix - A Pixelfed Client
+
 ![Preview of App](https://github.com/daniebeler/pixelix/blob/59fa74d084bb78aea16d5a7ef5321b10bd8ff352/github-image.png)
 
 Pixelix is an Android client for [Pixelfed](https://pixelfed.org/), the federated image-sharing social network.
@@ -32,3 +34,12 @@ If you are opening pull requests please use the dev branch as base.
 Curious how many times Pixelix has been downloaded?
 
 You can view the release download statistics here on [GitHub Release Stats](https://github-release-stats.ghostbyte.dev/ghostbyte-dev/pixelix). It’s a simple tool we also maintain to track GitHub release download counts.
+
+<br>
+
+## 👻 A Ghostbyte Production
+
+Have questions, feedback, or just want to say hi? Reach out to us and we’ll get back to you!
+
+Website: [ghostbyte.dev](https://ghostbyte.dev)  
+Email: [hey@ghostbyte.dev](mailto:hey@ghostbyte.dev)
