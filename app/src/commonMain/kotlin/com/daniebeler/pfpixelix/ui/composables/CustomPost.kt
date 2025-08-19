@@ -23,14 +23,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -60,7 +58,7 @@ fun CustomPost(
         ?: "LEHLk~WB2yk8pyo0adR*.7kCMdnj"
     val blurHashBitmap = remember(firstBlurHash) { BlurHashDecoder.decode(firstBlurHash) }
 
-    Box(modifier = customModifier.aspectRatio(1f)) {
+    Box(modifier = customModifier.clip(RoundedCornerShape(6.dp)).aspectRatio(1f)) {
         if (blurHashBitmap != null) {
             Image(
                 blurHashBitmap,
