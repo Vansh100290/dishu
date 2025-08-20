@@ -4,12 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,21 +59,21 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
 
 
     Column(
-        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
 
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
             divider = {},
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
             modifier = Modifier
                 .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                .background(MaterialTheme.colorScheme.surface)
         ) {
             Tab(
                 text = { Text(stringResource(Res.string.posts)) },
                 selected = pagerState.currentPage == 0,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
                 onClick = {
                     scope.launch {
                         pagerState.animateScrollToPage(0)
@@ -88,7 +85,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
                 text = { Text(stringResource(Res.string.accounts)) },
                 selected = pagerState.currentPage == 1,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
                 onClick = {
                     scope.launch {
                         pagerState.animateScrollToPage(1)
@@ -99,7 +96,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
                 text = { Text(stringResource(Res.string.hashtags)) },
                 selected = pagerState.currentPage == 2,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
                 onClick = {
                     scope.launch {
                         pagerState.animateScrollToPage(2)
@@ -110,7 +107,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
         HorizontalPager(
             state = pagerState,
             beyondViewportPageCount = 3,
-            modifier = Modifier.weight(1f).background(MaterialTheme.colorScheme.surfaceContainer)
+            modifier = Modifier.weight(1f).background(MaterialTheme.colorScheme.background)
         ) { tabIndex ->
             when (tabIndex) {
                 0 -> Box(modifier = Modifier.fillMaxSize()) {

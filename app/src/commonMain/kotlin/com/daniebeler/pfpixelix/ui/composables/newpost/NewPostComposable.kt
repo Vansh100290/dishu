@@ -37,7 +37,6 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -53,6 +52,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,11 +69,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Visibility
-import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
@@ -123,16 +121,24 @@ fun NewPostComposable(
     }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(title = {
-            Text(text = stringResource(Res.string.new_post), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        }, actions = {
-            Button(
-                onClick = { showReleaseAlert = true },
-                enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading })
-            ) {
-                Text(text = stringResource(Res.string.release))
-            }
-        })
+        TopAppBar(
+            title = {
+                Text(
+                    text = stringResource(Res.string.new_post),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }, actions = {
+                Button(
+                    onClick = { showReleaseAlert = true },
+                    enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading })
+                ) {
+                    Text(text = stringResource(Res.string.release))
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
     }) { paddingValues ->
         Box {
             Column(
@@ -140,7 +146,8 @@ fun NewPostComposable(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                ImagesPager(viewModel.images,
+                ImagesPager(
+                    viewModel.images,
                     { index, altText ->
                         viewModel.updateAltTextVariable(
                             index, altText
@@ -157,10 +164,12 @@ fun NewPostComposable(
                         onChange = { viewModel.caption = it },
                         label = stringResource(Res.string.caption)
                     )
-                    NewPostPref(leadingIcon = Res.drawable.browsers_outline,
+                    NewPostPref(
+                        leadingIcon = Res.drawable.browsers_outline,
                         title = stringResource(Res.string.sensitive_nsfw_media),
                         trailingContent = {
-                            Switch(checked = viewModel.sensitive,
+                            Switch(
+                                checked = viewModel.sensitive,
                                 onCheckedChange = { viewModel.sensitive = it })
                         })
                     AnimatedVisibility(
@@ -174,7 +183,8 @@ fun NewPostComposable(
                             label = stringResource(Res.string.content_warning_or_spoiler_text)
                         )
                     }
-                    NewPostPref(leadingIcon = Res.drawable.browsers_outline,
+                    NewPostPref(
+                        leadingIcon = Res.drawable.browsers_outline,
                         title = stringResource(Res.string.audience),
                         trailingContent = {
                             Box {
@@ -188,9 +198,9 @@ fun NewPostComposable(
                                     Text(text = buttonText)
                                 }
                                 DropdownMenu(
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false }) {
-                                    DropdownMenuItem(text = { Text(stringResource(Res.string.audience_public)) },
+                                    expanded = expanded, onDismissRequest = { expanded = false }) {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(Res.string.audience_public)) },
                                         onClick = { viewModel.audience = Visibility.PUBLIC },
                                         trailingIcon = {
                                             if (viewModel.audience == Visibility.PUBLIC) {
@@ -201,7 +211,8 @@ fun NewPostComposable(
                                                 )
                                             }
                                         })
-                                    DropdownMenuItem(text = { Text(stringResource(Res.string.unlisted)) },
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(Res.string.unlisted)) },
                                         onClick = { viewModel.audience = Visibility.UNLISTED },
                                         trailingIcon = {
                                             if (viewModel.audience == Visibility.UNLISTED) {
@@ -212,7 +223,8 @@ fun NewPostComposable(
                                                 )
                                             }
                                         })
-                                    DropdownMenuItem(text = { Text(stringResource(Res.string.followers_only)) },
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(Res.string.followers_only)) },
                                         onClick = { viewModel.audience = Visibility.PRIVATE },
                                         trailingIcon = {
                                             if (viewModel.audience == Visibility.PRIVATE) {
@@ -281,14 +293,14 @@ fun NewPostComposable(
             LoadingComposable(isLoading = viewModel.createPostState.isLoading)
             //LoadingComposable(isLoading = viewModel.mediaUploadState.isLoading)
             ErrorComposableDialog(
-                errorMessage = viewModel.mediaUploadState.error,
-                onDismiss = { viewModel.mediaUploadState = viewModel.mediaUploadState.copy(error = "") }
-            )
+                errorMessage = viewModel.mediaUploadState.error, onDismiss = {
+                    viewModel.mediaUploadState = viewModel.mediaUploadState.copy(error = "")
+                })
 
             ErrorComposableDialog(
-                errorMessage = viewModel.createPostState.error,
-                onDismiss = { viewModel.createPostState = viewModel.createPostState.copy(error = "") }
-            )
+                errorMessage = viewModel.createPostState.error, onDismiss = {
+                    viewModel.createPostState = viewModel.createPostState.copy(error = "")
+                })
         }
     }
 }
@@ -326,8 +338,7 @@ fun ImagesPager(
                 Card(Modifier.fillMaxWidth().aspectRatio(1f).clickable { launcher.launch() }) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Icon(
-                            modifier = Modifier.height(50.dp)
-                                .width(50.dp),
+                            modifier = Modifier.height(50.dp).width(50.dp),
                             imageVector = vectorResource(Res.drawable.add_outline),
                             contentDescription = null,
                         )

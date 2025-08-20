@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -44,40 +44,42 @@ fun HashtagTimelineComposable(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
-        topBar = {
-            TopAppBar(title = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        "#$hashtag",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                }
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
+            TopAppBar(
+                title = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "#$hashtag",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
 
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                    )
-                }
-            }, actions = {
-                FollowButton(
-                    firstLoaded = viewModel.hashtagState.hashtag != null,
-                    isLoading = viewModel.hashtagState.isLoading,
-                    isFollowing = viewModel.hashtagState.hashtag?.following ?: false,
-                    onFollowClick = { viewModel.followHashtag(viewModel.hashtagState.hashtag!!.name) },
-                    onUnFollowClick = { viewModel.unfollowHashtag(viewModel.hashtagState.hashtag!!.name) })
-            })
-
+                }, navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                }, actions = {
+                    FollowButton(
+                        firstLoaded = viewModel.hashtagState.hashtag != null,
+                        isLoading = viewModel.hashtagState.isLoading,
+                        isFollowing = viewModel.hashtagState.hashtag?.following ?: false,
+                        onFollowClick = { viewModel.followHashtag(viewModel.hashtagState.hashtag!!.name) },
+                        onUnFollowClick = { viewModel.unfollowHashtag(viewModel.hashtagState.hashtag!!.name) })
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            )
         }) { paddingValues ->
         Box(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
-                .padding(paddingValues)
+            modifier = Modifier.padding(paddingValues)
         ) {
             InfinitePostsList(
                 items = viewModel.postsState.hashtagTimeline,

@@ -29,6 +29,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -71,7 +72,8 @@ fun OwnProfileComposable(
     val lazyGridState = rememberLazyListState()
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(title = {
+        TopAppBar(
+            title = {
             Row(Modifier.clickable { showBottomSheet = 2 }) {
                 Column {
                     Text(
@@ -98,15 +100,17 @@ fun OwnProfileComposable(
                     imageVector = Icons.Outlined.MoreVert, contentDescription = "preferences"
                 )
             }
-        })
-
+        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
+        )
     }
 
     ) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
             onRefresh = { viewModel.loadData(true) },
-            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
         ) {
             LazyColumn(
@@ -116,7 +120,8 @@ fun OwnProfileComposable(
                     Column(
                         modifier = Modifier.clip(
                             RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-                        ).background(MaterialTheme.colorScheme.surface).padding(bottom = 12.dp)
+                        ).background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(bottom = 12.dp)
                     ) {
                         if (viewModel.accountState.account != null) {
                             ProfileTopSection(
@@ -136,7 +141,7 @@ fun OwnProfileComposable(
                                     shape = RoundedCornerShape(12.dp),
                                     contentPadding = PaddingValues(12.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                                         contentColor = MaterialTheme.colorScheme.onSurface
                                     )
                                 ) {

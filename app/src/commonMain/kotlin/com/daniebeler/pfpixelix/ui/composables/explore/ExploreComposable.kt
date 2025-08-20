@@ -105,12 +105,15 @@ fun ExploreComposable(
 
     Box(Modifier
         .fillMaxSize()
-        .background(MaterialTheme.colorScheme.surface)
+        .background(MaterialTheme.colorScheme.surfaceContainer)
         .semantics { isTraversalGroup = true }) {
         SearchBar(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .semantics { traversalIndex = 0f },
+            colors = SearchBarDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+            ),
             inputField = {
                 SearchBarDefaults.InputField(
                     query = textFieldState.text.toString(),

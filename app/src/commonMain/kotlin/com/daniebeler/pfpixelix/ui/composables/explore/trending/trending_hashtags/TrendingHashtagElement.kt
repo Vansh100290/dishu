@@ -51,7 +51,7 @@ fun TrendingHashtagElement(
     Column(
         Modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .padding(vertical = 8.dp)
             .fillMaxWidth()
             .clickable {

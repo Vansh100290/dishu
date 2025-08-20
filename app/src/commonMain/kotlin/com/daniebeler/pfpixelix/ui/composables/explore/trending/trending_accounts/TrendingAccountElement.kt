@@ -35,11 +35,8 @@ fun TrendingAccountElement(
     }
 
     Column(
-        Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(12.dp)
-            .fillMaxWidth()
+        Modifier.clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow).padding(12.dp).fillMaxWidth()
             .clickable {
                 navController.navigate(Destination.Profile(account.id))
             }) {
@@ -51,8 +48,8 @@ fun TrendingAccountElement(
                 text = account.note,
                 mentions = null,
                 navController = navController,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), openUrl = { url -> viewModel.openUrl(url) }
-            )
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                openUrl = { url -> viewModel.openUrl(url) })
         }
 
         NonlazyGrid(itemCount = minOf(9, viewModel.postsState.posts.size)) {
@@ -67,13 +64,15 @@ fun TrendingAccountElement(
 
 @Composable
 private fun NonlazyGrid(
-    itemCount: Int,
-    content: @Composable (Int) -> Unit
+    itemCount: Int, content: @Composable (Int) -> Unit
 ) {
 
     val columns = 3
 
-    Column(modifier = Modifier.clip(RoundedCornerShape(12.dp)), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(
+        modifier = Modifier.clip(RoundedCornerShape(12.dp)),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         var rows = (itemCount / columns)
         if (itemCount.mod(columns) > 0) {
             rows += 1
@@ -82,14 +81,11 @@ private fun NonlazyGrid(
         for (rowId in 0 until rows) {
             val firstIndex = rowId * columns
 
-            Row (horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 for (columnId in 0 until columns) {
                     val index = firstIndex + columnId
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .weight(1f)
+                        modifier = Modifier.fillMaxWidth().aspectRatio(1f).weight(1f)
                     ) {
                         if (index < itemCount) {
                             content(index)

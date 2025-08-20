@@ -199,7 +199,7 @@ fun PostComposable(
         Column(
             modifier = modifier.clip(
                 RoundedCornerShape(16.dp)
-            ).background(MaterialTheme.colorScheme.surface).padding(top = 12.dp, bottom = 12.dp)
+            ).background(MaterialTheme.colorScheme.surfaceContainerLow).padding(top = 12.dp, bottom = 12.dp)
         ) {
             post.rebloggedBy?.let { reblogAccount ->
                 Row(
@@ -432,7 +432,7 @@ fun PostComposable(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.clip(
                                     RoundedCornerShape(percent = 50)
-                                ).background(MaterialTheme.colorScheme.surfaceContainer)
+                                ).background(MaterialTheme.colorScheme.surfaceContainerHigh)
                                     .padding(horizontal = 10.dp, vertical = 4.dp)
                             ) {
                                 if (viewModel.post!!.favourited) {
@@ -472,7 +472,7 @@ fun PostComposable(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.clip(
                                     RoundedCornerShape(percent = 50)
-                                ).background(MaterialTheme.colorScheme.surfaceContainer)
+                                ).background(MaterialTheme.colorScheme.surfaceContainerHigh)
                                     .padding(horizontal = 10.dp, vertical = 4.dp)
                             ) {
                                 Icon(

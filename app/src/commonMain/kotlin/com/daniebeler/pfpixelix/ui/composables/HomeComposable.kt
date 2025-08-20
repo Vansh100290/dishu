@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
@@ -68,7 +70,8 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-            TopAppBar(title = {
+            TopAppBar(
+                title = {
                 Text(
                     stringResource(Res.string.app_name),
                     fontWeight = FontWeight.Bold,
@@ -101,70 +104,80 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
                         )
                     }
                 }
-            })
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+            )
         }) { paddingValues ->
 
         Column(
             Modifier.fillMaxSize().padding(paddingValues)
-                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .background(MaterialTheme.colorScheme.background)
         ) {
 
-            PrimaryTabRow(
-                selectedTabIndex = pagerState.currentPage,
-                divider = {},
-                modifier = Modifier.clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                Tab(
-                    text = { Text(stringResource(Res.string.home)) },
-                    selected = pagerState.currentPage == 0,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(0)
+            Box {
+                PrimaryTabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    divider = {},
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    modifier = Modifier.clip(
+                        RoundedCornerShape(
+                            bottomStart = 24.dp, bottomEnd = 24.dp
+                        )
+                    ).zIndex(1f)
+                ) {
+                    Tab(
+                        text = { Text(stringResource(Res.string.home)) },
+                        selected = pagerState.currentPage == 0,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(0)
+                            }
+                        })
+
+                    Tab(
+                        text = { Text(stringResource(Res.string.local)) },
+                        selected = pagerState.currentPage == 1,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(1)
+                            }
+                        })
+
+                    Tab(
+                        text = { Text(stringResource(Res.string.global)) },
+                        selected = pagerState.currentPage == 2,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(2)
+                            }
+                        })
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    beyondViewportPageCount = 3,
+                    modifier = Modifier.padding(top = 0.dp) // flush behind tab row
+                        .background(MaterialTheme.colorScheme.background).zIndex(0f)
+                ) { tabIndex ->
+                    when (tabIndex) {
+                        0 -> Box(modifier = Modifier.fillMaxSize()) {
+                            HomeTimelineComposable(navController)
                         }
-                    })
 
-                Tab(
-                    text = { Text(stringResource(Res.string.local)) },
-                    selected = pagerState.currentPage == 1,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(1)
+                        1 -> Box(modifier = Modifier.fillMaxSize()) {
+                            LocalTimelineComposable(navController)
                         }
-                    })
 
-                Tab(
-                    text = { Text(stringResource(Res.string.global)) },
-                    selected = pagerState.currentPage == 2,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(2)
+                        2 -> Box(modifier = Modifier.fillMaxSize()) {
+                            GlobalTimelineComposable(navController)
                         }
-                    })
-            }
-            HorizontalPager(
-                state = pagerState,
-                beyondViewportPageCount = 3,
-                modifier = Modifier.weight(1f)
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-            ) { tabIndex ->
-                when (tabIndex) {
-                    0 -> Box(modifier = Modifier.fillMaxSize()) {
-                        HomeTimelineComposable(navController)
-                    }
-
-                    1 -> Box(modifier = Modifier.fillMaxSize()) {
-                        LocalTimelineComposable(navController)
-                    }
-
-                    2 -> Box(modifier = Modifier.fillMaxSize()) {
-                        GlobalTimelineComposable(navController)
                     }
                 }
             }

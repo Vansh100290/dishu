@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.about_instance
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,17 +64,25 @@ fun AboutInstanceComposable(
 
     val lazyListState = rememberLazyListState()
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(title = {
-            Text(text = viewModel.ownInstanceDomain, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+        TopAppBar(
+            title = {
+                Text(
+                    text = viewModel.ownInstanceDomain,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
-            }
-        })
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    )
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
     }) { paddingValues ->
         LazyColumn(
             modifier = Modifier.padding(paddingValues), state = lazyListState

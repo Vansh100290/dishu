@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.notifications
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -71,28 +73,37 @@ fun NotificationsComposable(
     val scrollState = rememberScrollState()
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(title = {
-            Text(stringResource(Res.string.notifications), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        }, actions = {
-            if (PlatformFeatures.notificationWidgets) {
-                IconButton(onClick = {
-                    viewModel.pinWidget()
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.extension_puzzle_outline),
-                        contentDescription = "add widget"
-                    )
+        TopAppBar(
+            title = {
+                Text(
+                    stringResource(Res.string.notifications),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }, actions = {
+                if (PlatformFeatures.notificationWidgets) {
+                    IconButton(onClick = {
+                        viewModel.pinWidget()
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.extension_puzzle_outline),
+                            contentDescription = "add widget"
+                        )
+                    }
                 }
-            }
-        })
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
     }) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
             Column {
-                Row(modifier = Modifier.horizontalScroll(scrollState)) {
+                Row(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+                        .horizontalScroll(scrollState)
+                ) {
                     Spacer(modifier = Modifier.width(12.dp))
                     if (viewModel.filter == NotificationsFilterEnum.All) {
                         ActiveFilterButton(text = stringResource(Res.string.all))
@@ -108,8 +119,7 @@ fun NotificationsComposable(
                         ActiveFilterButton(text = stringResource(Res.string.followers))
                     } else {
                         InactiveFilterButton(
-                            text = stringResource(Res.string.followers),
-                            onClick = {
+                            text = stringResource(Res.string.followers), onClick = {
                                 viewModel.changeFilter(NotificationsFilterEnum.Followers)
                             })
                     }
@@ -143,9 +153,14 @@ fun NotificationsComposable(
                             viewModel.changeFilter(NotificationsFilterEnum.Mentions)
                         })
                     }
+
+                    Spacer(modifier = Modifier.width(12.dp))
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(
+                    modifier = Modifier.fillMaxWidth().height(12.dp)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                )
 
                 PullToRefreshBox(
                     isRefreshing = viewModel.notificationsState.isRefreshing,
@@ -182,9 +197,7 @@ fun NotificationsComposable(
                             if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
                                 item {
                                     CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(80.dp)
+                                        modifier = Modifier.fillMaxWidth().height(80.dp)
                                             .wrapContentSize(Alignment.Center)
                                     )
                                 }
@@ -235,7 +248,7 @@ private fun InactiveFilterButton(text: String, onClick: () -> Unit) {
         onClick = { onClick() },
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
