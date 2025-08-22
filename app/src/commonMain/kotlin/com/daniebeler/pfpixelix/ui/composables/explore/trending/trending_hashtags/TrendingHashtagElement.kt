@@ -84,7 +84,7 @@ fun TrendingHashtagElement(
         ) {
 
             item(span = { GridItemSpan(3) }) {
-                Spacer(Modifier.width(12.dp))
+                Spacer(Modifier.width(4.dp))
             }
 
             itemsIndexed(viewModel.postsState.posts) { index, post ->
@@ -124,7 +124,7 @@ fun TrendingHashtagElement(
             }
 
             item(span = { GridItemSpan(3) }) {
-                Spacer(Modifier.width(12.dp))
+                Spacer(Modifier.width(4.dp))
             }
         }
 

@@ -199,7 +199,8 @@ fun PostComposable(
         Column(
             modifier = modifier.clip(
                 RoundedCornerShape(16.dp)
-            ).background(MaterialTheme.colorScheme.surfaceContainerLow).padding(top = 12.dp, bottom = 12.dp)
+            ).background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .padding(top = 12.dp, bottom = 12.dp)
         ) {
             post.rebloggedBy?.let { reblogAccount ->
                 Row(
@@ -360,13 +361,13 @@ fun PostComposable(
 
                             Box(
                                 modifier = Modifier.align(Alignment.TopEnd).zIndex(51f)
-                                    .padding(top = 16.dp, end = 28.dp).clip(CircleShape)
+                                    .padding(top = 20.dp, end = 20.dp).clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                                    .padding(vertical = 3.dp, horizontal = 12.dp)
+                                    .padding(vertical = 2.dp, horizontal = 8.dp)
                             ) {
                                 Text(
                                     text = (pagerState.currentPage + 1).toString() + "/" + viewModel.post!!.mediaAttachments.count(),
-                                    fontSize = 14.sp
+                                    fontSize = 13.sp
                                 )
                             }
                         }
@@ -374,7 +375,7 @@ fun PostComposable(
                         Spacer(modifier = Modifier.height(5.dp))
                         Row(
                             Modifier.wrapContentHeight().fillMaxWidth()
-                                .align(Alignment.CenterHorizontally).padding(bottom = 8.dp),
+                                .align(Alignment.CenterHorizontally),
                             horizontalArrangement = Arrangement.Center
                         ) {
                             repeat(pagerState.pageCount) { iteration ->

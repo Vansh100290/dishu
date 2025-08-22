@@ -93,66 +93,70 @@ fun EditProfileComposable(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(scrollBehavior = scrollBehavior, title = {
-                Text(
-                    text = stringResource(Res.string.edit_profile),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = ""
+            TopAppBar(
+                scrollBehavior = scrollBehavior, title = {
+                    Text(
+                        text = stringResource(Res.string.edit_profile),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
-                }
-            }, actions = {
-                if (viewModel.firstLoaded) {
-                    if (viewModel.displayname == (viewModel.accountState.account?.displayname
-                            ?: "") && viewModel.note == (viewModel.accountState.account?.note
-                            ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
-                            ?: "") && viewModel.newAvatar == null && viewModel.privateProfile == viewModel.accountState.account?.locked
-                    ) {
-                        if (!viewModel.accountState.isLoading) {
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                enabled = false,
-                                colors = ButtonDefaults.buttonColors(
-                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                    disabledContentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            ) {
-                                Text(text = stringResource(Res.string.save))
-                            }
-                        }
-                    } else {
-                        if (viewModel.accountState.isLoading) {
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(20.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
+                }, navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                }, actions = {
+                    if (viewModel.firstLoaded) {
+                        if (viewModel.displayname == (viewModel.accountState.account?.displayname
+                                ?: "") && viewModel.note == (viewModel.accountState.account?.note
+                                ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
+                                ?: "") && viewModel.newAvatar == null && viewModel.privateProfile == viewModel.accountState.account?.locked
+                        ) {
+                            if (!viewModel.accountState.isLoading) {
+                                Button(
+                                    onClick = {},
+                                    modifier = Modifier.width(120.dp),
+                                    shape = RoundedCornerShape(12.dp),
+                                    enabled = false,
+                                    colors = ButtonDefaults.buttonColors(
+                                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        disabledContentColor = MaterialTheme.colorScheme.onSurface
+                                    )
+                                ) {
+                                    Text(text = stringResource(Res.string.save))
+                                }
                             }
                         } else {
-                            Button(
-                                onClick = { viewModel.save() },
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text(text = stringResource(Res.string.save))
+                            if (viewModel.accountState.isLoading) {
+                                Button(
+                                    onClick = {},
+                                    modifier = Modifier.width(120.dp),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(20.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            } else {
+                                Button(
+                                    onClick = { viewModel.save() },
+                                    modifier = Modifier.width(120.dp),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(text = stringResource(Res.string.save))
+                                }
                             }
                         }
                     }
-                }
-            })
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            )
         }) { paddingValues ->
         Box(
             modifier = Modifier.padding(paddingValues).fillMaxSize()
@@ -320,20 +324,24 @@ private fun ImageCropperFullscreenDialog(
             Scaffold(
                 contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
                 topBar = {
-                    TopAppBar(title = {}, navigationIcon = {
-                        androidx.compose.material.IconButton(onClick = { state.done(accept = false) }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
-                        }
-                    }, actions = {
-                        IconButton(onClick = { state.reset() }) {
-                            Icon(Icons.Default.Refresh, null)
-                        }
-                        IconButton(
-                            onClick = { state.done(accept = true) }, enabled = !state.accepted
-                        ) {
-                            Icon(Icons.Default.Done, null)
-                        }
-                    })
+                    TopAppBar(
+                        title = {}, navigationIcon = {
+                            androidx.compose.material.IconButton(onClick = { state.done(accept = false) }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                            }
+                        }, actions = {
+                            IconButton(onClick = { state.reset() }) {
+                                Icon(Icons.Default.Refresh, null)
+                            }
+                            IconButton(
+                                onClick = { state.done(accept = true) }, enabled = !state.accepted
+                            ) {
+                                Icon(Icons.Default.Done, null)
+                            }
+                        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    )
                 }) { paddingValues ->
                 Box(
                     modifier = Modifier.fillMaxSize().padding(paddingValues)

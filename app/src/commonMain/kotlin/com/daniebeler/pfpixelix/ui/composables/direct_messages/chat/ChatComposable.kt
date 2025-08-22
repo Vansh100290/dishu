@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,10 +59,8 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.beginning_of_chat_note
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.message
 
@@ -119,7 +118,9 @@ fun ChatComposable(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
-        })
+        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ))
     }) { paddingValues ->
 
         PullToRefreshBox (

@@ -38,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -176,13 +177,15 @@ fun OtherProfileComposable(
                     imageVector = Icons.Outlined.MoreVert, contentDescription = ""
                 )
             }
-        })
+        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ))
 
     }) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
             onRefresh = { viewModel.loadData(userId, true, navController) },
-            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
         ) {
 
@@ -193,7 +196,7 @@ fun OtherProfileComposable(
                     Column(
                         modifier = Modifier.clip(
                             RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-                        ).background(MaterialTheme.colorScheme.surface).padding(bottom = 12.dp)
+                        ).background(MaterialTheme.colorScheme.surfaceContainer).padding(bottom = 12.dp)
                     ) {
                         if (viewModel.accountState.account != null) {
                             ProfileTopSection(
@@ -271,8 +274,8 @@ fun OtherProfileComposable(
                                 shape = RoundedCornerShape(12.dp),
                                 contentPadding = PaddingValues(12.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    contentColor = MaterialTheme.colorScheme.onSurface
                                 )
                             ) {
                                 Text(text = stringResource(Res.string.message))

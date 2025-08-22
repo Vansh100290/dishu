@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -36,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -66,7 +64,6 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.add_outline
 import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.conversations
 import pixelix.app.generated.resources.direct_messages_encryption_description
@@ -101,30 +98,35 @@ fun ConversationsComposable(
 
         },
         topBar = {
-            TopAppBar(title = {
-                Text(
-                    stringResource(Res.string.conversations),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(Res.string.conversations),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
 
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                    )
-                }
-            }, actions = {
-                IconButton(onClick = { showBottomSheet = true }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.help_outline),
-                        tint = MaterialTheme.colorScheme.error,
-                        contentDescription = null
-                    )
-                }
-            })
+                }, navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                }, actions = {
+                    IconButton(onClick = { showBottomSheet = true }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.help_outline),
+                            tint = MaterialTheme.colorScheme.error,
+                            contentDescription = null
+                        )
+                    }
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            )
         }) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = viewModel.conversationsState.isRefreshing,
@@ -241,12 +243,12 @@ private fun CreateNewConversation(
                         viewModel.newConversationState.suggestions.map {
                             Box(
                                 modifier = Modifier.fillMaxWidth().padding(8.dp).clickable {
-                                        viewModel.newConversationUsername = TextFieldValue(
-                                            it.acct, selection = TextRange(it.acct.length)
-                                        )
-                                        viewModel.newConversationSelectedAccount = it
-                                        viewModel.newConversationState = NewConversationState()
-                                    }) {
+                                    viewModel.newConversationUsername = TextFieldValue(
+                                        it.acct, selection = TextRange(it.acct.length)
+                                    )
+                                    viewModel.newConversationSelectedAccount = it
+                                    viewModel.newConversationState = NewConversationState()
+                                }) {
                                 Text(
                                     text = "@${it.acct}",
                                     color = MaterialTheme.colorScheme.onBackground

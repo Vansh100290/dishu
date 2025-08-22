@@ -68,7 +68,8 @@ fun FollowersMainComposable(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(title = {
+            TopAppBar(
+                title = {
                 Column {
                     Text(
                         text = viewModel.accountState.account?.username ?: "",
@@ -85,17 +86,24 @@ fun FollowersMainComposable(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = ""
                     )
                 }
-            })
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+            )
 
         }) { paddingValues ->
         Column(
             Modifier.fillMaxSize().padding(paddingValues)
         ) {
 
-            PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
+            PrimaryTabRow(
+                selectedTabIndex = pagerState.currentPage, divider = {},
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            ) {
                 Tab(
                     text = {
                         if (viewModel.accountState.account != null) {
