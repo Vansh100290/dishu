@@ -118,7 +118,7 @@ fun OwnProfileComposable(
             ) {
                 item {
                     Column(
-                        modifier = Modifier.clip(
+                        modifier = Modifier.fillMaxWidth().clip(
                             RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
                         ).background(MaterialTheme.colorScheme.surfaceContainer)
                             .padding(bottom = 12.dp)

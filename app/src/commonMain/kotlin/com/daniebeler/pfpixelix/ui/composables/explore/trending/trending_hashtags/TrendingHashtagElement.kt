@@ -76,16 +76,15 @@ fun TrendingHashtagElement(
             }
         }
 
+        Box(modifier = Modifier.padding(horizontal = 8.dp).clip(
+            RoundedCornerShape(12.dp)
+        )) {
         LazyHorizontalGrid(
             rows = GridCells.Fixed(3),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.height(428.dp)
         ) {
-
-            item(span = { GridItemSpan(3) }) {
-                Spacer(Modifier.width(4.dp))
-            }
 
             itemsIndexed(viewModel.postsState.posts) { index, post ->
 
@@ -122,11 +121,7 @@ fun TrendingHashtagElement(
                     CustomPost(post = post, navController = navController, customModifier = customModifier)
                 }
             }
-
-            item(span = { GridItemSpan(3) }) {
-                Spacer(Modifier.width(4.dp))
-            }
         }
-
+        }
     }
 }

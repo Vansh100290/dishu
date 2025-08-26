@@ -60,7 +60,7 @@ fun ProfileTopSection(
     openUrl: (url: String) -> Unit
 ) {
     if (account != null) {
-        Column(Modifier.padding(12.dp)) {
+        Column(Modifier.padding(12.dp).fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
                     model = account.avatar,
