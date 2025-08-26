@@ -68,6 +68,7 @@ fun HashtagTimelineComposable(
                     }
                 }, actions = {
                     FollowButton(
+                        iconButton = true,
                         firstLoaded = viewModel.hashtagState.hashtag != null,
                         isLoading = viewModel.hashtagState.isLoading,
                         isFollowing = viewModel.hashtagState.hashtag?.following ?: false,
