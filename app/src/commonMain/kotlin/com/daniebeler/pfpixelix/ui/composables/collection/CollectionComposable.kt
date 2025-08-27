@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -74,93 +75,14 @@ fun CollectionComposable(
         viewModel.loadData(collectionId)
     }
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(
-            title = {
-                if (viewModel.collectionState.collection != null) {
-                    if (viewModel.editState.editMode) {
-                        TextField(
-                            value = viewModel.editState.name,
-                            singleLine = true,
-                            onValueChange = {
-                                viewModel.editState = viewModel.editState.copy(name = it)
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = TextFieldDefaults.colors(
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                            )
-                        )
-                    } else {
-                        Column {
-                            Text(
-                                viewModel.collectionState.collection!!.title,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                stringResource(
-                                    Res.string.by, viewModel.collectionState.collection!!.username
-                                ), fontSize = 12.sp, lineHeight = 6.sp
-                            )
-                        }
-                    }
-                }
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                    )
-                }
-            }, actions = {
-                if (viewModel.editState.editMode) {
-                    TextButton(onClick = {
-                        viewModel.toggleEditMode()
-                    }) {
-                        Text(stringResource(Res.string.cancel))
-                    }
-                    TextButton(onClick = {
-                        viewModel.confirmEdit()
-                    }) {
-                        Text(stringResource(Res.string.confirm))
-                    }
-                } else {
-
-                    viewModel.collectionState.collection?.let {
-                        if (it.username == viewModel.myUsername) {
-                            IconButton(onClick = {
-                                viewModel.toggleEditMode()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Edit, contentDescription = ""
-                                )
-                            }
-                        }
-                    }
-
-                    IconButton(onClick = {
-                        //Navigate.navigate("settings_screen", navController)
-                        showBottomSheet = true
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.MoreVert, contentDescription = ""
-                        )
-                    }
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
-        )
-    }) { paddingValues ->
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
+            modifier = Modifier.fillMaxSize()
+                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
+                .padding(paddingValues)
         ) {
             InfinitePostsGrid(
+                contentPaddingTop = 24.dp,
                 items = if (viewModel.editState.editMode) {
                     viewModel.editState.editPosts
                 } else {
@@ -257,5 +179,89 @@ fun CollectionComposable(
                 }
             }
         }
+
+        TopAppBar(
+            modifier = Modifier.clip(
+                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            ), title = {
+                if (viewModel.collectionState.collection != null) {
+                    if (viewModel.editState.editMode) {
+                        TextField(
+                            value = viewModel.editState.name,
+                            singleLine = true,
+                            onValueChange = {
+                                viewModel.editState = viewModel.editState.copy(name = it)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                            )
+                        )
+                    } else {
+                        Column {
+                            Text(
+                                viewModel.collectionState.collection!!.title,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
+                            Text(
+                                stringResource(
+                                    Res.string.by, viewModel.collectionState.collection!!.username
+                                ), fontSize = 12.sp, lineHeight = 6.sp
+                            )
+                        }
+                    }
+                }
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    )
+                }
+            }, actions = {
+                if (viewModel.editState.editMode) {
+                    TextButton(onClick = {
+                        viewModel.toggleEditMode()
+                    }) {
+                        Text(stringResource(Res.string.cancel))
+                    }
+                    TextButton(onClick = {
+                        viewModel.confirmEdit()
+                    }) {
+                        Text(stringResource(Res.string.confirm))
+                    }
+                } else {
+
+                    viewModel.collectionState.collection?.let {
+                        if (it.username == viewModel.myUsername) {
+                            IconButton(onClick = {
+                                viewModel.toggleEditMode()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Edit, contentDescription = ""
+                                )
+                            }
+                        }
+                    }
+
+                    IconButton(onClick = {
+                        //Navigate.navigate("settings_screen", navController)
+                        showBottomSheet = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                        )
+                    }
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
     }
 }

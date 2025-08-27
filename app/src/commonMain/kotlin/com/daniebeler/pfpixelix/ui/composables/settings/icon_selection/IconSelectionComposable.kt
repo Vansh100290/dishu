@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
@@ -52,7 +54,6 @@ import pixelix.app.generated.resources.change
 import pixelix.app.generated.resources.change_app_icon
 import pixelix.app.generated.resources.change_app_icon_dialog_content
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IconSelectionComposable(
@@ -62,32 +63,18 @@ fun IconSelectionComposable(
     val lazyGridState = rememberLazyGridState()
     val (newIcon, setNewIcon) = remember { mutableStateOf<DrawableResource?>(null) }
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(
-            title = {
-                Text("Icon Selection", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                    )
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
-        )
-
-    }) { paddingValues ->
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { paddingValues ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
+            modifier = Modifier.fillMaxSize()
+                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
+                .padding(paddingValues)
         ) {
 
             val selectedIcon = viewModel.selectedIcon.collectAsState()
             LazyVerticalGrid(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(top = 30.dp),
                 modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
                 state = lazyGridState,
                 columns = GridCells.Fixed(3)
@@ -112,6 +99,24 @@ fun IconSelectionComposable(
 
 
         }
+
+        TopAppBar(
+            modifier = Modifier.clip(
+            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+        ), title = {
+            Text("Icon Selection", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        }, navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                )
+            }
+        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
+        )
 
         if (newIcon != null) {
             AlertDialog(title = {
