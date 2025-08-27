@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,9 +30,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import kotlinx.coroutines.launch
@@ -96,13 +100,19 @@ fun FollowersMainComposable(
             )
 
         }) { paddingValues ->
-        Column(
+        Box(
             Modifier.fillMaxSize().padding(paddingValues)
         ) {
 
             PrimaryTabRow(
-                selectedTabIndex = pagerState.currentPage, divider = {},
+                selectedTabIndex = pagerState.currentPage,
+                divider = {},
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                modifier = Modifier.clip(
+                    RoundedCornerShape(
+                        bottomStart = 24.dp, bottomEnd = 24.dp
+                    )
+                ).zIndex(1f)
             ) {
                 Tab(
                     text = {
@@ -149,7 +159,8 @@ fun FollowersMainComposable(
 
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.weight(1f).background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.padding(top = 24.dp)
+                    .background(MaterialTheme.colorScheme.background).zIndex(0f)
             ) { tabIndex ->
                 when (tabIndex) {
                     0 -> Box(modifier = Modifier.fillMaxSize()) {

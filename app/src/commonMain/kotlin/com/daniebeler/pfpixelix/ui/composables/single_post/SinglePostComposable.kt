@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -23,6 +24,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,8 +61,31 @@ fun SinglePostComposable(
         }
     }
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(title = {
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { paddingValues ->
+        Box(
+            modifier = Modifier.padding(paddingValues).padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
+                .fillMaxSize()
+        ) {
+            Column(modifier = Modifier.verticalScroll(scrollState).padding(top = 28.dp, start = 4.dp, end = 4.dp, bottom = 28.dp)) {
+                if (viewModel.postState.post != null) {
+                    PostComposable(
+                        viewModel.postState.post!!, navController, postGetsDeleted = {
+                        navController.navigate(Destination.OwnProfile) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }, setZindex = { }, openReplies
+                    )
+                }
+            }
+
+            LoadingComposable(isLoading = viewModel.postState.isLoading)
+            ErrorComposable(message = viewModel.postState.error)
+        }
+
+        TopAppBar(
+            modifier = Modifier.clip(
+            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+        ), title = {
             Column {
                 Text(
                     text = stringResource(Res.string.post),
@@ -83,25 +108,7 @@ fun SinglePostComposable(
             }
         }, colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ))
-    }) { paddingValues ->
-        Box(
-            modifier = Modifier.padding(paddingValues).fillMaxSize().padding(6.dp)
-        ) {
-            Column(modifier = Modifier.verticalScroll(scrollState)) {
-                if (viewModel.postState.post != null) {
-                    PostComposable(
-                        viewModel.postState.post!!, navController, postGetsDeleted = {
-                        navController.navigate(Destination.OwnProfile) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    }, setZindex = { }, openReplies
-                    )
-                }
-            }
-
-            LoadingComposable(isLoading = viewModel.postState.isLoading)
-            ErrorComposable(message = viewModel.postState.error)
-        }
+        )
+        )
     }
 }
