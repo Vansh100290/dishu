@@ -58,9 +58,29 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
     val range by remember { mutableStateOf("daily") }
 
 
-    Column(
+    Box(
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
+        HorizontalPager(
+            state = pagerState,
+            beyondViewportPageCount = 3,
+            modifier = Modifier.padding(top = 24.dp).background(MaterialTheme.colorScheme.background)
+        ) { tabIndex ->
+            when (tabIndex) {
+                0 -> Box(modifier = Modifier.fillMaxSize()) {
+                    TrendingPostsComposable(range, navController = navController)
+                }
+
+                1 -> Box(modifier = Modifier.fillMaxSize()) {
+                    TrendingAccountsComposable(navController = navController)
+                }
+
+                2 -> Box(modifier = Modifier.fillMaxSize()) {
+                    TrendingHashtagsComposable(navController = navController)
+                }
+
+            }
+        }
 
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
@@ -102,27 +122,6 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
                         pagerState.animateScrollToPage(2)
                     }
                 })
-        }
-
-        HorizontalPager(
-            state = pagerState,
-            beyondViewportPageCount = 3,
-            modifier = Modifier.weight(1f).background(MaterialTheme.colorScheme.background)
-        ) { tabIndex ->
-            when (tabIndex) {
-                0 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingPostsComposable(range, navController = navController)
-                }
-
-                1 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingAccountsComposable(navController = navController)
-                }
-
-                2 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingHashtagsComposable(navController = navController)
-                }
-
-            }
         }
     }
 

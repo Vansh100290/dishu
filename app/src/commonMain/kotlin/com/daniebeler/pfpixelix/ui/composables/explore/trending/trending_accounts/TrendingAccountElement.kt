@@ -36,7 +36,7 @@ fun TrendingAccountElement(
 
     Column(
         Modifier.clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow).padding(12.dp).fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceContainerLow).padding(8.dp).fillMaxWidth()
             .clickable {
                 navController.navigate(Destination.Profile(account.id))
             }) {

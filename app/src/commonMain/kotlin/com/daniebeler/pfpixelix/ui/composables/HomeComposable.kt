@@ -109,13 +109,10 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
             )
             )
         }) { paddingValues ->
-
-        Column(
-            Modifier.fillMaxSize().padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-
-            Box {
+            Box(
+                Modifier.fillMaxSize().padding(paddingValues)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
                 PrimaryTabRow(
                     selectedTabIndex = pagerState.currentPage,
                     divider = {},
@@ -163,7 +160,7 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
                 HorizontalPager(
                     state = pagerState,
                     beyondViewportPageCount = 3,
-                    modifier = Modifier.padding(top = 24.dp) // flush behind tab row
+                    modifier = Modifier.padding(top = 24.dp)
                         .background(MaterialTheme.colorScheme.background).zIndex(0f)
                 ) { tabIndex ->
                     when (tabIndex) {
@@ -181,7 +178,6 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
                     }
                 }
             }
-        }
     }
     if (showBottomSheet) {
         ModalBottomSheet(
