@@ -29,6 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -74,83 +75,87 @@ fun CollectionComposable(
     }
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(title = {
-            if (viewModel.collectionState.collection != null) {
-                if (viewModel.editState.editMode) {
-                    TextField(
-                        value = viewModel.editState.name,
-                        singleLine = true,
-                        onValueChange = {
-                            viewModel.editState = viewModel.editState.copy(name = it)
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        TopAppBar(
+            title = {
+                if (viewModel.collectionState.collection != null) {
+                    if (viewModel.editState.editMode) {
+                        TextField(
+                            value = viewModel.editState.name,
+                            singleLine = true,
+                            onValueChange = {
+                                viewModel.editState = viewModel.editState.copy(name = it)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = TextFieldDefaults.colors(
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                            )
                         )
-                    )
-                } else {
-                    Column {
-                        Text(
-                            viewModel.collectionState.collection!!.title,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                        Text(
-                            stringResource(
-                                Res.string.by, viewModel.collectionState.collection!!.username
-                            ), fontSize = 12.sp, lineHeight = 6.sp
-                        )
-                    }
-                }
-            }
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                )
-            }
-        }, actions = {
-            if (viewModel.editState.editMode) {
-                TextButton(onClick = {
-                    viewModel.toggleEditMode()
-                }) {
-                    Text(stringResource(Res.string.cancel))
-                }
-                TextButton(onClick = {
-                    viewModel.confirmEdit()
-                }) {
-                    Text(stringResource(Res.string.confirm))
-                }
-            } else {
-
-                viewModel.collectionState.collection?.let {
-                    if (it.username == viewModel.myUsername) {
-                        IconButton(onClick = {
-                            viewModel.toggleEditMode()
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Edit, contentDescription = ""
+                    } else {
+                        Column {
+                            Text(
+                                viewModel.collectionState.collection!!.title,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
+                            Text(
+                                stringResource(
+                                    Res.string.by, viewModel.collectionState.collection!!.username
+                                ), fontSize = 12.sp, lineHeight = 6.sp
                             )
                         }
                     }
                 }
-
+            }, navigationIcon = {
                 IconButton(onClick = {
-                    //Navigate.navigate("settings_screen", navController)
-                    showBottomSheet = true
+                    navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                     )
                 }
-            }
-        })
+            }, actions = {
+                if (viewModel.editState.editMode) {
+                    TextButton(onClick = {
+                        viewModel.toggleEditMode()
+                    }) {
+                        Text(stringResource(Res.string.cancel))
+                    }
+                    TextButton(onClick = {
+                        viewModel.confirmEdit()
+                    }) {
+                        Text(stringResource(Res.string.confirm))
+                    }
+                } else {
+
+                    viewModel.collectionState.collection?.let {
+                        if (it.username == viewModel.myUsername) {
+                            IconButton(onClick = {
+                                viewModel.toggleEditMode()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Edit, contentDescription = ""
+                                )
+                            }
+                        }
+                    }
+
+                    IconButton(onClick = {
+                        //Navigate.navigate("settings_screen", navController)
+                        showBottomSheet = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                        )
+                    }
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
     }) { paddingValues ->
         Column(
             modifier = Modifier.fillMaxSize().padding(paddingValues)

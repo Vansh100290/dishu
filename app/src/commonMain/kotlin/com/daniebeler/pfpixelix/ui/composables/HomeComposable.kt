@@ -163,7 +163,7 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
                 HorizontalPager(
                     state = pagerState,
                     beyondViewportPageCount = 3,
-                    modifier = Modifier.padding(top = 48.dp) // flush behind tab row
+                    modifier = Modifier.padding(top = 24.dp) // flush behind tab row
                         .background(MaterialTheme.colorScheme.background).zIndex(0f)
                 ) { tabIndex ->
                     when (tabIndex) {

@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,10 +7,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -41,6 +38,7 @@ fun InfinitePostsList(
     changeView: (view: ViewEnum) -> Unit = {},
     isFirstItemLarge: Boolean = false,
     postsCount: Int? = null,
+    contentPaddingTop: Dp = 0.dp,
     contentPaddingBottom: Dp = 4.dp
 ) {
     val lazyListState = rememberLazyListState()
@@ -61,11 +59,7 @@ fun InfinitePostsList(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             state = lazyListState,
             contentPadding = PaddingValues(
-                top = if (postsCount != null) {
-                    0.dp
-                } else {
-                    12.dp
-                }, bottom = contentPaddingBottom
+                top = contentPaddingTop, bottom = contentPaddingBottom
             )
         ) {
             postsCount?.let {
