@@ -25,7 +25,7 @@ fun HomeTimelineComposable(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         InfinitePostsList(items = viewModel.homeTimelineState.homeTimeline,
-            contentPaddingTop = 30.dp,
+            contentPaddingTop = 32.dp,
             isLoading = viewModel.homeTimelineState.isLoading,
             isRefreshing = viewModel.homeTimelineState.refreshing,
             error = viewModel.homeTimelineState.error,

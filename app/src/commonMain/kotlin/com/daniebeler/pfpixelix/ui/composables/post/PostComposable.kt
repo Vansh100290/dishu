@@ -278,7 +278,7 @@ fun PostComposable(
                 }) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.ellipsis_vertical),
-                        modifier = Modifier.size(22.dp),
+                        modifier = Modifier.size(20.dp),
                         contentDescription = ""
                     )
                 }
@@ -290,7 +290,7 @@ fun PostComposable(
                 if (viewModel.post!!.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
 
                     Box(
-                        modifier.padding(start = 12.dp, end = 12.dp).clip(RoundedCornerShape(16.dp))
+                        modifier.padding(start = 8.dp, end = 8.dp).clip(RoundedCornerShape(16.dp))
                     ) {
                         val blurHashBitmap = BlurHashDecoder.decode(
                             viewModel.post!!.mediaAttachments[0].blurHash
@@ -346,7 +346,7 @@ fun PostComposable(
                             ) { page ->
                                 Box(
                                     modifier = Modifier.zIndex(10f)
-                                        .padding(start = 12.dp, end = 12.dp)
+                                        .padding(start = 8.dp, end = 8.dp)
                                 ) {
                                     PostImage(
                                         mediaAttachment = viewModel.post!!.mediaAttachments[page],
