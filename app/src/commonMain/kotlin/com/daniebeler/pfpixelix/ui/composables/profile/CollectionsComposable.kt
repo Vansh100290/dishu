@@ -116,7 +116,7 @@ fun CollectionsComposable(
                                     .height(84.dp)
                                     .width(84.dp)
                                     .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.surfaceContainer),
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(

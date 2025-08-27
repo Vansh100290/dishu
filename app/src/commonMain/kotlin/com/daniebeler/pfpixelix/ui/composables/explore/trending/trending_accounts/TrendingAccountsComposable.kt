@@ -1,7 +1,9 @@
 package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +31,8 @@ fun TrendingAccountsComposable(
         isRefreshing = viewModel.trendingAccountsState.isRefreshing,
         onRefresh = { viewModel.getTrendingAccountsState(true) },
     ) {
-        LazyColumn(modifier = Modifier.fillMaxSize(),
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+            contentPadding = PaddingValues(top = 32.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             content = {
                 items(viewModel.trendingAccountsState.trendingAccounts, key = {

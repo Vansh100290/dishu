@@ -27,7 +27,6 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,6 +37,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -48,11 +48,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.decodeToImageBitmap
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.attafitamim.krop.core.crop.CropResult
@@ -72,10 +71,8 @@ import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.bio
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.displayname
 import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.private_profile
@@ -89,233 +86,217 @@ fun EditProfileComposable(
     viewModel: EditProfileViewModel = injectViewModel(key = "edit-profile-viewmodel-key") { editProfileViewModel }
 ) {
 
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
     Scaffold(
-        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            CenterAlignedTopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = {
-                    Text(
-                        text = stringResource(Res.string.edit_profile),
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.chevron_back_outline),
-                            contentDescription = ""
-                        )
-                    }
-                },
-                actions = {
-                    if (viewModel.firstLoaded) {
-                        if (viewModel.displayname == (viewModel.accountState.account?.displayname
-                                ?: "") && viewModel.note == (viewModel.accountState.account?.note
-                                ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
-                                ?: "") && viewModel.newAvatar == null && viewModel.privateProfile == viewModel.accountState.account?.locked
-                        ) {
-                            if (!viewModel.accountState.isLoading) {
-                                Button(
-                                    onClick = {},
-                                    modifier = Modifier.width(120.dp),
-                                    shape = RoundedCornerShape(12.dp),
-                                    enabled = false,
-                                    colors = ButtonDefaults.buttonColors(
-                                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                        disabledContentColor = MaterialTheme.colorScheme.onSurface
-                                    )
-                                ) {
-                                    Text(text = stringResource(Res.string.save))
-                                }
-                            }
-                        } else {
-                            if (viewModel.accountState.isLoading) {
-                                Button(
-                                    onClick = {},
-                                    modifier = Modifier.width(120.dp),
-                                    shape = RoundedCornerShape(12.dp)
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(20.dp),
-                                        color = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                }
-                            } else {
-                                Button(
-                                    onClick = { viewModel.save() },
-                                    modifier = Modifier.width(120.dp),
-                                    shape = RoundedCornerShape(12.dp)
-                                ) {
-                                    Text(text = stringResource(Res.string.save))
-                                }
-                            }
-                        }
-                    }
-                })
-        }) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)
+    ) { paddingValues ->
+        Column(
+            Modifier.padding(paddingValues)
+                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp).fillMaxSize()
+                .padding(horizontal = 12.dp).verticalScroll(state = rememberScrollState()).imeAwareInsets(90.dp)
         ) {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(12.dp)
-                    .verticalScroll(state = rememberScrollState())
-                    .imeAwareInsets(90.dp)
-            ) {
 
-                if (viewModel.accountState.account != null) {
+            if (viewModel.accountState.account != null) {
 
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        val coroutineScope = rememberCoroutineScope()
-                        val imageCropper = rememberImageCropper()
-                        val cropState = imageCropper.cropState
-                        if (cropState != null) {
-                            ImageCropperFullscreenDialog(cropState)
-                        }
+                Spacer(Modifier.height(32.dp))
 
-                        val filePicker = rememberFilePickerLauncher(
-                            type = FileKitType.Image, mode = FileKitMode.Single
-                        ) { file ->
-                            file ?: return@rememberFilePickerLauncher
-                            coroutineScope.launch {
-                                val cropResult = imageCropper.crop {
-                                    ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
-                                }
-                                if (cropResult is CropResult.Success) {
-                                    viewModel.newAvatar = cropResult.bitmap
-                                }
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    val coroutineScope = rememberCoroutineScope()
+                    val imageCropper = rememberImageCropper()
+                    val cropState = imageCropper.cropState
+                    if (cropState != null) {
+                        ImageCropperFullscreenDialog(cropState)
+                    }
+
+                    val filePicker = rememberFilePickerLauncher(
+                        type = FileKitType.Image, mode = FileKitMode.Single
+                    ) { file ->
+                        file ?: return@rememberFilePickerLauncher
+                        coroutineScope.launch {
+                            val cropResult = imageCropper.crop {
+                                ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
+                            }
+                            if (cropResult is CropResult.Success) {
+                                viewModel.newAvatar = cropResult.bitmap
                             }
                         }
-
-                        val newAvatar = viewModel.newAvatar
-                        if (newAvatar != null) {
-                            Image(
-                                bitmap = newAvatar,
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .height(112.dp)
-                                    .width(112.dp)
-                                    .clip(CircleShape)
-                                    .clickable { filePicker.launch() }
-                            )
-                        } else {
-                            AsyncImage(
-                                model = viewModel.avatarUri.toString(),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .height(112.dp)
-                                    .width(112.dp)
-                                    .clip(CircleShape)
-                                    .clickable { filePicker.launch() }
-                            )
-                        }
                     }
 
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Row {
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(Res.string.displayname),
-                            fontWeight = FontWeight.Bold
-                        )
+                    val newAvatar = viewModel.newAvatar
+                    if (newAvatar != null) {
+                        Image(
+                            bitmap = newAvatar,
+                            contentDescription = "",
+                            modifier = Modifier.height(112.dp).width(112.dp).clip(CircleShape)
+                                .clickable { filePicker.launch() })
+                    } else {
+                        AsyncImage(
+                            model = viewModel.avatarUri.toString(),
+                            contentDescription = "",
+                            modifier = Modifier.height(112.dp).width(112.dp).clip(CircleShape)
+                                .clickable { filePicker.launch() })
                     }
-
-                    Spacer(Modifier.height(6.dp))
-
-                    TextField(
-                        value = viewModel.displayname,
-                        singleLine = true,
-                        onValueChange = { viewModel.displayname = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Row {
-                        Spacer(Modifier.width(6.dp))
-                        Text(text = stringResource(Res.string.bio), fontWeight = FontWeight.Bold)
-                    }
-
-                    Spacer(Modifier.height(6.dp))
-
-
-                    TextField(
-                        value = viewModel.note,
-                        onValueChange = { viewModel.note = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Row {
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(Res.string.website),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(Modifier.height(6.dp))
-
-                    TextField(
-                        value = viewModel.website,
-                        singleLine = true,
-                        prefix = {
-                            Text(text = "https://")
-                        },
-                        onValueChange = { viewModel.website = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(Res.string.private_profile),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Switch(
-                            checked = viewModel.privateProfile,
-                            onCheckedChange = { viewModel.privateProfile = it })
-                    }
-
                 }
 
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Row {
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(Res.string.displayname), fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(Modifier.height(6.dp))
+
+                TextField(
+                    value = viewModel.displayname,
+                    singleLine = true,
+                    onValueChange = { viewModel.displayname = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Row {
+                    Spacer(Modifier.width(6.dp))
+                    Text(text = stringResource(Res.string.bio), fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(Modifier.height(6.dp))
+
+
+                TextField(
+                    value = viewModel.note,
+                    onValueChange = { viewModel.note = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Row {
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(Res.string.website), fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(Modifier.height(6.dp))
+
+                TextField(
+                    value = viewModel.website,
+                    singleLine = true,
+                    prefix = {
+                        Text(text = "https://")
+                    },
+                    onValueChange = { viewModel.website = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(Res.string.private_profile),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = viewModel.privateProfile,
+                        onCheckedChange = { viewModel.privateProfile = it })
+                }
+
+                Spacer(Modifier.height(24.dp))
             }
+
         }
+
+        TopAppBar(
+            modifier = Modifier.clip(
+                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            ), title = {
+                Text(
+                    text = stringResource(Res.string.edit_profile),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    )
+                }
+            }, actions = {
+                if (viewModel.firstLoaded) {
+                    if (viewModel.displayname == (viewModel.accountState.account?.displayname
+                            ?: "") && viewModel.note == (viewModel.accountState.account?.note
+                            ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
+                            ?: "") && viewModel.newAvatar == null && viewModel.privateProfile == viewModel.accountState.account?.locked
+                    ) {
+                        if (!viewModel.accountState.isLoading) {
+                            Button(
+                                onClick = {},
+                                modifier = Modifier.width(120.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                enabled = false,
+                                colors = ButtonDefaults.buttonColors(
+                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    disabledContentColor = MaterialTheme.colorScheme.onSurface
+                                )
+                            ) {
+                                Text(text = stringResource(Res.string.save))
+                            }
+                        }
+                    } else {
+                        if (viewModel.accountState.isLoading) {
+                            Button(
+                                onClick = {},
+                                modifier = Modifier.width(120.dp),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        } else {
+                            Button(
+                                onClick = { viewModel.save() },
+                                modifier = Modifier.width(120.dp),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(text = stringResource(Res.string.save))
+                            }
+                        }
+                    }
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
 
     }
 }
@@ -339,34 +320,32 @@ private fun ImageCropperFullscreenDialog(
             Scaffold(
                 contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
                 topBar = {
-                    CenterAlignedTopAppBar(
-                        title = {},
-                        navigationIcon = {
+                    TopAppBar(
+                        title = {}, navigationIcon = {
                             androidx.compose.material.IconButton(onClick = { state.done(accept = false) }) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
                             }
-                        },
-                        actions = {
+                        }, actions = {
                             IconButton(onClick = { state.reset() }) {
                                 Icon(Icons.Default.Refresh, null)
                             }
                             IconButton(
-                                onClick = { state.done(accept = true) },
-                                enabled = !state.accepted
+                                onClick = { state.done(accept = true) }, enabled = !state.accepted
                             ) {
                                 Icon(Icons.Default.Done, null)
                             }
-                        }
+                        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
                     )
-                }
-            ) { paddingValues ->
+                }) { paddingValues ->
                 Box(
                     modifier = Modifier.fillMaxSize().padding(paddingValues)
                 ) {
                     CropperPreview(state = state, modifier = Modifier.fillMaxSize())
-                    Box(Modifier
-                        .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
+                    Box(
+                        Modifier.fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
                     ) {
                         DefaultControls(state)
                     }

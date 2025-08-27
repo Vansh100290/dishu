@@ -1,5 +1,7 @@
 import com.google.devtools.ksp.gradle.KspAATask
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat.*
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -150,8 +152,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 35
-        versionCode = 32
-        versionName = "4.1.1"
+        versionCode = 33
+        versionName = "4.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

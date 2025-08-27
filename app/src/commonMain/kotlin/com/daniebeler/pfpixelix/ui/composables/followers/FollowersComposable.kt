@@ -1,19 +1,18 @@
 package com.daniebeler.pfpixelix.ui.composables.followers
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
@@ -36,7 +35,7 @@ fun FollowersComposable(
 ) {
     val lazyListState = rememberLazyListState()
 
-    LazyColumn(state = lazyListState, content = {
+    LazyColumn(state = lazyListState, contentPadding = PaddingValues(top = 24.dp), content = {
         items(viewModel.followersState.followers, key = {
             it.id
         }) {

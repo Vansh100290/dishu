@@ -4,35 +4,35 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -47,6 +47,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
@@ -62,7 +63,6 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.add_outline
 import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.conversations
 import pixelix.app.generated.resources.direct_messages_encryption_description
@@ -86,86 +86,108 @@ fun ConversationsComposable(
 
     val lazyListState = rememberLazyListState()
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), floatingActionButton = {
-        FloatingActionButton(onClick = {
-            showNewChatDialog.value = true
-        }) {
-            Icon(vectorResource(Res.drawable.add_outline), contentDescription = "Add")
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+
+        Box(
+            modifier = Modifier.padding(top = TopAppBarDefaults.TopAppBarExpandedHeight + statusBarPadding - 24.dp)
+                .fillMaxSize()
+        ) {
+            PullToRefreshBox(
+                isRefreshing = viewModel.conversationsState.isRefreshing,
+                onRefresh = { viewModel.refresh() },
+                modifier = Modifier.fillMaxSize()
+            ) {
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(top = 28.dp),
+                    content = {
+                        if (viewModel.conversationsState.conversations.isNotEmpty()) {
+                            items(viewModel.conversationsState.conversations, key = {
+                                it.id
+                            }) {
+                                ConversationElementComposable(
+                                    conversation = it, navController = navController
+                                )
+                            }
+
+                            if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
+                                item {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.fillMaxWidth().height(80.dp)
+                                            .wrapContentSize(Alignment.Center)
+                                    )
+                                }
+                            }
+
+                            if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
+                                item {
+                                    EndOfListComposable()
+                                }
+                            }
+                        }
+                    })
+
+                if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
+                    FullscreenEmptyStateComposable(
+                        EmptyState(
+                            icon = vectorResource(Res.drawable.mail_outline),
+                            heading = stringResource(
+                                Res.string.you_don_t_have_any_notifications
+                            )
+                        )
+                    )
+                }
+
+                if (!viewModel.conversationsState.isRefreshing && viewModel.conversationsState.conversations.isEmpty()) {
+                    LoadingComposable(isLoading = viewModel.conversationsState.isLoading)
+                }
+                ErrorComposable(message = viewModel.conversationsState.error)
+            }
         }
 
-    }, topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(stringResource(Res.string.conversations), fontWeight = FontWeight.Bold)
+        TopAppBar(
+            modifier = Modifier.clip(
+            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+        ), title = {
+            Text(
+                stringResource(Res.string.conversations),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
 
         }, navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
                 )
             }
         }, actions = {
-            IconButton(onClick = { showBottomSheet = true }) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.help_outline),
-                    tint = MaterialTheme.colorScheme.error,
-                    contentDescription = null
-                )
-            }
-        })
-    }) { paddingValues ->
-        PullToRefreshBox(
-            isRefreshing = viewModel.conversationsState.isRefreshing,
-            onRefresh = { viewModel.refresh() },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize(), content = {
-                if (viewModel.conversationsState.conversations.isNotEmpty()) {
-                    items(viewModel.conversationsState.conversations, key = {
-                        it.id
-                    }) {
-                        ConversationElementComposable(
-                            conversation = it, navController = navController
-                        )
-                    }
-
-                    if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
-                        item {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(80.dp)
-                                    .wrapContentSize(Alignment.Center)
-                            )
-                        }
-                    }
-
-                    if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
-                        item {
-                            EndOfListComposable()
-                        }
-                    }
-                }
-            })
-
-            if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
-                FullscreenEmptyStateComposable(
-                    EmptyState(
-                        icon = vectorResource(Res.drawable.mail_outline), heading = stringResource(
-                            Res.string.you_don_t_have_any_notifications
-                        )
+            Row {
+                IconButton(onClick = { showNewChatDialog.value = true }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.add_outline),
+                        contentDescription = null
                     )
-                )
+                }
+
+                IconButton(onClick = { showBottomSheet = true }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.help_outline),
+                        tint = MaterialTheme.colorScheme.error,
+                        contentDescription = null
+                    )
+                }
             }
 
-            if (!viewModel.conversationsState.isRefreshing && viewModel.conversationsState.conversations.isEmpty()) {
-                LoadingComposable(isLoading = viewModel.conversationsState.isLoading)
-            }
-            ErrorComposable(message = viewModel.conversationsState.error)
-        }
+        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
+        )
 
         InfiniteListHandler(lazyListState = lazyListState) {
             //viewModel.getNotificationsPaginated()
@@ -175,13 +197,10 @@ fun ConversationsComposable(
             ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
-                },
-                sheetState = sheetState
+                }, sheetState = sheetState
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
                 ) {
                     Column {
                         Spacer(modifier = Modifier.height(18.dp))
@@ -228,19 +247,15 @@ private fun CreateNewConversation(
             )
             if (viewModel.newConversationState.suggestions.isNotEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .clip(shape = RoundedCornerShape(12.dp))
+                    modifier = Modifier.padding(top = 4.dp).clip(shape = RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
                     Column(
                         modifier = Modifier.padding(12.dp)
                     ) {
                         viewModel.newConversationState.suggestions.map {
-                            Box(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .clickable {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().padding(8.dp).clickable {
                                     viewModel.newConversationUsername = TextFieldValue(
                                         it.acct, selection = TextRange(it.acct.length)
                                     )

@@ -4,14 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -26,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
@@ -59,49 +58,13 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
     val range by remember { mutableStateOf("daily") }
 
 
-    Column(
-        Modifier.fillMaxSize()
+    Box(
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
-
-        PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-            Tab(text = { Text(stringResource(Res.string.posts)) },
-                selected = pagerState.currentPage == 0,
-                selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                onClick = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(0)
-                    }
-
-                })
-
-            Tab(text = { Text(stringResource(Res.string.accounts)) },
-                selected = pagerState.currentPage == 1,
-                selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                onClick = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(1)
-                    }
-                })
-
-            Tab(text = { Text(stringResource(Res.string.hashtags)) },
-                selected = pagerState.currentPage == 2,
-                selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                onClick = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(2)
-                    }
-                })
-        }
-
         HorizontalPager(
             state = pagerState,
             beyondViewportPageCount = 3,
-            modifier = Modifier
-                .weight(1f)
-                .background(MaterialTheme.colorScheme.background)
+            modifier = Modifier.padding(top = 24.dp).background(MaterialTheme.colorScheme.background)
         ) { tabIndex ->
             when (tabIndex) {
                 0 -> Box(modifier = Modifier.fillMaxSize()) {
@@ -118,19 +81,58 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
 
             }
         }
+
+        PrimaryTabRow(
+            selectedTabIndex = pagerState.currentPage,
+            divider = {},
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier
+                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+        ) {
+            Tab(
+                text = { Text(stringResource(Res.string.posts)) },
+                selected = pagerState.currentPage == 0,
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
+
+                })
+
+            Tab(
+                text = { Text(stringResource(Res.string.accounts)) },
+                selected = pagerState.currentPage == 1,
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(1)
+                    }
+                })
+
+            Tab(
+                text = { Text(stringResource(Res.string.hashtags)) },
+                selected = pagerState.currentPage == 2,
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(2)
+                    }
+                })
+        }
     }
 
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
-            },
-            sheetState = sheetState
+            }, sheetState = sheetState
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp)
+                modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)
             ) {
                 Column {
                     Spacer(modifier = Modifier.height(18.dp))

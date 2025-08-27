@@ -1,7 +1,9 @@
 package com.daniebeler.pfpixelix
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.icons.Icons
@@ -96,8 +99,7 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
-    appComponent: AppComponent,
-    exitApp: () -> Unit
+    appComponent: AppComponent, exitApp: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
     DisposableEffect(uriHandler) {
@@ -165,25 +167,17 @@ fun App(
                                     }
                                 })
                             }
-                        }
-                    ) {
+                        }) {
                         Scaffold(
                             contentWindowInsets = WindowInsets(0),
                             snackbarHost = { SnackbarHost(snackbarHostState) },
-                            bottomBar = {
-                                BottomBar(
-                                    navController = navController,
-                                    openAccountSwitchBottomSheet = {
-                                        showAccountSwitchBottomSheet = true
-                                    },
-                                )
-                            },
-                            content = { paddingValues ->
+                        ) { paddingValues ->
+                            Box(Modifier.fillMaxSize().padding(paddingValues)) {
                                 val startDestination =
                                     if (activeUser == null) Destination.FirstLogin
                                     else Destination.HomeTabFeeds
                                 NavHost(
-                                    modifier = Modifier.fillMaxSize().padding(paddingValues)
+                                    modifier = Modifier.fillMaxSize().padding(bottom = 76.dp)
                                         .consumeWindowInsets(WindowInsets.navigationBars),
                                     navController = navController,
                                     startDestination = startDestination,
@@ -193,10 +187,23 @@ fun App(
                                             { scope.launch { drawerState.open() } },
                                             exitApp
                                         )
-                                    }
-                                )
+                                    })
+
+                                Box(
+                                    modifier = Modifier.align(Alignment.BottomCenter)
+                                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                                        .background(MaterialTheme.colorScheme.surface)
+                                ) {
+                                    BottomBar(
+                                        navController = navController,
+                                        openAccountSwitchBottomSheet = {
+                                            showAccountSwitchBottomSheet = true
+                                        },
+                                    )
+                                }
                             }
-                        )
+
+                        }
                     }
                 }
 
@@ -235,10 +242,7 @@ private enum class HomeTab(
     val label: StringResource
 ) {
     Feeds(
-        Destination.HomeTabFeeds,
-        Res.drawable.house,
-        Res.drawable.house_fill,
-        Res.string.home
+        Destination.HomeTabFeeds, Res.drawable.house, Res.drawable.house_fill, Res.string.home
     ),
     Search(
         Destination.HomeTabSearch,
@@ -268,8 +272,7 @@ private enum class HomeTab(
 
 @Composable
 private fun BottomBar(
-    navController: NavHostController,
-    openAccountSwitchBottomSheet: () -> Unit
+    navController: NavHostController, openAccountSwitchBottomSheet: () -> Unit
 ) {
     val systemNavigationBarHeight =
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -278,9 +281,7 @@ private fun BottomBar(
     val appComponent = LocalAppComponent.current
     LaunchedEffect(Unit) {
         val authService = appComponent.authService
-        authService.activeUser
-            .map { authService.getCurrentSession() }
-            .collect {
+        authService.activeUser.map { authService.getCurrentSession() }.collect {
                 avatar = it?.avatar
             }
     }
@@ -329,10 +330,7 @@ private fun BottomBar(
                                 model = avatar,
                                 error = painterResource(Res.drawable.default_avatar),
                                 contentDescription = "",
-                                modifier = Modifier
-                                    .height(30.dp)
-                                    .width(30.dp)
-                                    .clip(CircleShape)
+                                modifier = Modifier.height(30.dp).width(30.dp).clip(CircleShape)
                             )
                             Icon(
                                 Icons.Outlined.UnfoldMore,
@@ -348,14 +346,10 @@ private fun BottomBar(
                             contentDescription = stringResource(tab.label)
                         )
                     }
-                },
-                selected = isSelected,
-                colors = NavigationBarItemDefaults.colors(
+                }, selected = isSelected, colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.inverseSurface,
                     indicatorColor = Color.Transparent
-                ),
-                interactionSource = interactionSource,
-                onClick = {
+                ), interactionSource = interactionSource, onClick = {
                     if (!isLongPress) {
                         if (!isSelected) {
                             //switch tab
@@ -373,16 +367,14 @@ private fun BottomBar(
                             if (!isOnRoot) {
                                 //back to root
                                 navController.popBackStack(
-                                    route = tabRoot.route!!,
-                                    inclusive = false
+                                    route = tabRoot.route!!, inclusive = false
                                 )
                             } else if (currentDestination.hasRoute<Destination.Search>()) {
                                 appComponent.searchFieldFocus.focus()
                             }
                         }
                     }
-                }
-            )
+                })
         }
     }
 }

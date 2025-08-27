@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
@@ -24,6 +25,7 @@ fun HomeTimelineComposable(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         InfinitePostsList(items = viewModel.homeTimelineState.homeTimeline,
+            contentPaddingTop = 32.dp,
             isLoading = viewModel.homeTimelineState.isLoading,
             isRefreshing = viewModel.homeTimelineState.refreshing,
             error = viewModel.homeTimelineState.error,

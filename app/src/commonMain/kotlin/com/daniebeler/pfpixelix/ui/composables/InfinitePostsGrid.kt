@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -17,6 +18,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -39,6 +41,7 @@ fun InfinitePostsGrid(
     emptyMessage: EmptyState,
     navController: NavController,
     getItemsPaginated: () -> Unit = { },
+    contentPaddingTop: Dp = 0.dp,
     before: @Composable (() -> Unit)? = null,
     after: @Composable (() -> Unit)? = null,
     onRefresh: () -> Unit = { },
@@ -52,13 +55,13 @@ fun InfinitePostsGrid(
         PullToRefreshBox(
             isRefreshing = isRefreshing, onRefresh = { onRefresh() }, modifier = Modifier.fillMaxSize()
         ) {
-            privateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, before, after, edit, editRemove, onClick)
+            privateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, contentPaddingTop, before, after, edit, editRemove, onClick)
         }
     } else {
         Box(
           modifier = Modifier.fillMaxSize()
         ) {
-            privateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, before, after, edit, editRemove, onClick)
+            privateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, contentPaddingTop, before, after, edit, editRemove, onClick)
         }
     }
 }
@@ -73,6 +76,7 @@ fun privateInfinitePostsGrid(
     emptyMessage: EmptyState,
     navController: NavController,
     getItemsPaginated: () -> Unit = { },
+    contentPaddingTop: Dp,
     before: @Composable (() -> Unit)? = null,
     after: @Composable (() -> Unit)? = null,
     edit: Boolean = false,
@@ -86,9 +90,10 @@ fun privateInfinitePostsGrid(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 12.dp),
+            .padding(horizontal = 4.dp),
         state = lazyGridState,
-        columns = GridCells.Fixed(3)
+        columns = GridCells.Fixed(3),
+        contentPadding = PaddingValues(top = contentPaddingTop)
     ) {
 
         if (before != null) {
@@ -98,7 +103,7 @@ fun privateInfinitePostsGrid(
         }
 
         item(span = { GridItemSpan(3) }) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(4.dp))
         }
 
         itemsIndexed(items) { index, photo ->

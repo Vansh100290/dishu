@@ -1,12 +1,12 @@
 package com.daniebeler.pfpixelix.ui.composables.followers
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,7 +30,6 @@ import pixelix.app.generated.resources.explore_trending_profiles
 import pixelix.app.generated.resources.not_following_anyone
 import pixelix.app.generated.resources.the_profiles_you_follow_will_appear_here
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FollowingComposable(
     navController: NavController,
@@ -38,7 +37,7 @@ fun FollowingComposable(
 ) {
     val lazyListState = rememberLazyListState()
 
-    LazyColumn(state = lazyListState, content = {
+    LazyColumn(state = lazyListState, contentPadding = PaddingValues(top = 24.dp), content = {
         items(viewModel.followingState.following, key = {
             it.id
         }) {
@@ -48,9 +47,7 @@ fun FollowingComposable(
         if (viewModel.followingState.following.isNotEmpty() && viewModel.followingState.isLoading && !viewModel.followingState.isRefreshing) {
             item {
                 CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
+                    modifier = Modifier.fillMaxWidth().height(80.dp)
                         .wrapContentSize(Alignment.Center)
                 )
             }
@@ -65,13 +62,13 @@ fun FollowingComposable(
 
     if (!viewModel.followingState.isLoading && viewModel.followingState.error.isEmpty() && viewModel.followingState.following.isEmpty()) {
 
-        val message = if (viewModel.loggedInAccountId == viewModel.accountId)
-            stringResource(Res.string.the_profiles_you_follow_will_appear_here)
-        else
-            stringResource(Res.string.not_following_anyone)
+        val message =
+            if (viewModel.loggedInAccountId == viewModel.accountId) stringResource(Res.string.the_profiles_you_follow_will_appear_here)
+            else stringResource(Res.string.not_following_anyone)
 
         FullscreenEmptyStateComposable(
-            emptyState = EmptyState(icon = Icons.Outlined.Groups,
+            emptyState = EmptyState(
+                icon = Icons.Outlined.Groups,
                 heading = stringResource(Res.string.empty),
                 message = message,
                 buttonText = stringResource(Res.string.explore_trending_profiles),

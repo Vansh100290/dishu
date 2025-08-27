@@ -96,7 +96,7 @@ private fun LazyListScope.PostsGridInScope(
         item {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.padding(horizontal = 12.dp)
+                modifier = Modifier.padding(horizontal = 4.dp)
             ) {
                 Box(modifier = Modifier.fillMaxWidth(1.99f / 3f)) {
                     CustomPost(
@@ -133,7 +133,7 @@ private fun LazyListScope.PostsGridInScope(
         val rows = posts.takeLast(posts.size - 3).chunked(3)
         itemsIndexed(rows) { rowIndex, rowItems ->
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Fill the row with 3 items (or fewer for the last row)
@@ -268,7 +268,7 @@ private fun LazyListScope.PostsListInScope(
     updatePost: (post: Post) -> Unit,
     navController: NavController
 ) {
-    val spacedBy: Dp = 28.dp
+    val spacedBy: Dp = 24.dp
 
     if (posts.isNotEmpty()) {
 
@@ -278,7 +278,7 @@ private fun LazyListScope.PostsListInScope(
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
-            Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
+            Box(modifier = Modifier.zIndex(zIndex.floatValue).padding(horizontal = 8.dp)) {
                 PostComposable(post = item,
                     postGetsDeleted = postGetsDeleted,
                     navController = navController,

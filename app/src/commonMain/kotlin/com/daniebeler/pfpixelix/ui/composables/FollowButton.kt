@@ -70,14 +70,15 @@ private fun IconFollowButton(
                         )
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 } else {
                     IconButton(
                         onClick = {}, colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
                         CircularProgressIndicator(
@@ -105,8 +106,8 @@ private fun IconFollowButton(
                         onClick = {
                             onFollowClick()
                         }, colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
                         Icon(

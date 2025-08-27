@@ -38,6 +38,7 @@ fun InfinitePostsList(
     changeView: (view: ViewEnum) -> Unit = {},
     isFirstItemLarge: Boolean = false,
     postsCount: Int? = null,
+    contentPaddingTop: Dp = 0.dp,
     contentPaddingBottom: Dp = 4.dp
 ) {
     val lazyListState = rememberLazyListState()
@@ -58,11 +59,7 @@ fun InfinitePostsList(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             state = lazyListState,
             contentPadding = PaddingValues(
-                top = if (postsCount != null) {
-                    0.dp
-                } else {
-                    12.dp
-                }, bottom = contentPaddingBottom
+                top = contentPaddingTop, bottom = contentPaddingBottom
             )
         ) {
             postsCount?.let {

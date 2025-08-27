@@ -6,14 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +24,8 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,9 +34,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
@@ -64,9 +69,14 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
     var showBottomSheet by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(title = {
-                Text(stringResource(Res.string.app_name), fontWeight = FontWeight.Bold)
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
+            TopAppBar(
+                title = {
+                Text(
+                    stringResource(Res.string.app_name),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
             }, navigationIcon = {
                 IconButton(onClick = { showBottomSheet = true }) {
                     Icon(
@@ -94,80 +104,89 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
                         )
                     }
                 }
-            })
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+            )
         }) { paddingValues ->
-
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-
-            PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
-                Tab(text = { Text(stringResource(Res.string.home)) },
-                    selected = pagerState.currentPage == 0,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(0)
-                        }
-                    })
-
-                Tab(text = { Text(stringResource(Res.string.local)) },
-                    selected = pagerState.currentPage == 1,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(1)
-                        }
-                    })
-
-                Tab(text = { Text(stringResource(Res.string.global)) },
-                    selected = pagerState.currentPage == 2,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(2)
-                        }
-                    })
-            }
-            HorizontalPager(
-                state = pagerState,
-                beyondViewportPageCount = 3,
-                modifier = Modifier
-                    .weight(1f)
+            Box(
+                Modifier.fillMaxSize().padding(paddingValues)
                     .background(MaterialTheme.colorScheme.background)
-            ) { tabIndex ->
-                when (tabIndex) {
-                    0 -> Box(modifier = Modifier.fillMaxSize()) {
-                        HomeTimelineComposable(navController)
-                    }
+            ) {
+                PrimaryTabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    divider = {},
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    modifier = Modifier.clip(
+                        RoundedCornerShape(
+                            bottomStart = 24.dp, bottomEnd = 24.dp
+                        )
+                    ).zIndex(1f)
+                ) {
+                    Tab(
+                        text = { Text(stringResource(Res.string.home)) },
+                        selected = pagerState.currentPage == 0,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(0)
+                            }
+                        })
 
-                    1 -> Box(modifier = Modifier.fillMaxSize()) {
-                        LocalTimelineComposable(navController)
-                    }
+                    Tab(
+                        text = { Text(stringResource(Res.string.local)) },
+                        selected = pagerState.currentPage == 1,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(1)
+                            }
+                        })
 
-                    2 -> Box(modifier = Modifier.fillMaxSize()) {
-                        GlobalTimelineComposable(navController)
+                    Tab(
+                        text = { Text(stringResource(Res.string.global)) },
+                        selected = pagerState.currentPage == 2,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(2)
+                            }
+                        })
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    beyondViewportPageCount = 3,
+                    modifier = Modifier.padding(top = 24.dp)
+                        .background(MaterialTheme.colorScheme.background).zIndex(0f)
+                ) { tabIndex ->
+                    when (tabIndex) {
+                        0 -> Box(modifier = Modifier.fillMaxSize()) {
+                            HomeTimelineComposable(navController)
+                        }
+
+                        1 -> Box(modifier = Modifier.fillMaxSize()) {
+                            LocalTimelineComposable(navController)
+                        }
+
+                        2 -> Box(modifier = Modifier.fillMaxSize()) {
+                            GlobalTimelineComposable(navController)
+                        }
                     }
                 }
             }
-        }
     }
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
-            },
-            sheetState = sheetState
+            }, sheetState = sheetState
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp)
+                modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)
             ) {
                 Column {
                     Spacer(modifier = Modifier.height(18.dp))
@@ -195,7 +214,7 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
 @Composable
 fun SheetItem(header: String, description: String) {
     Column {
-        Text(text = header, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(text = header, fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = description)
         Spacer(modifier = Modifier.height(16.dp))

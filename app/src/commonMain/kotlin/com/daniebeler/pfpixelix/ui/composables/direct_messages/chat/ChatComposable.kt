@@ -8,14 +8,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,9 +34,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,10 +57,8 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.beginning_of_chat_note
-import pixelix.app.generated.resources.chevron_back_outline
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.message
 
@@ -77,175 +75,195 @@ fun ChatComposable(
         viewModel.getChat(accountId)
     }
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(title = {
-            if (viewModel.chatState.chat != null) {
-                Row(
-                    modifier = Modifier.clickable {
-                        navController.navigate(Destination.Profile(accountId))
-                    }, verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AsyncImage(
-                        model = viewModel.chatState.chat!!.avatar,
-                        error = painterResource(Res.drawable.default_avatar),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .height(46.dp)
-                            .width(46.dp)
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
+    Box(modifier = Modifier.fillMaxSize()) {
+        val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
-                    Column {
-
-                        Text(text = viewModel.chatState.chat!!.name ?: "")
-                        Text(
-                            text = viewModel.chatState.chat!!.url.substringAfter("https://")
-                                .substringBefore("/"),
-                            fontSize = 12.sp,
-                            lineHeight = 6.sp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            }
-
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
-                )
-            }
-        })
-    }) { paddingValues ->
-
-        PullToRefreshBox (
-            isRefreshing = viewModel.chatState.isRefreshing,
-            onRefresh = { viewModel.getChat(accountId, true) },
-            modifier = Modifier
-                .imeAwareInsets(90.dp)
-                .padding(paddingValues)
+        Box(
+            modifier = Modifier.padding(top = TopAppBarDefaults.TopAppBarExpandedHeight + statusBarPadding - 24.dp)
+                .fillMaxSize()
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp)
-            ) {
-                LazyColumn(state = lazyListState,
-                    modifier = Modifier.weight(1f),
-                    reverseLayout = true,
-                    content = {
-                        if (viewModel.chatState.chat != null && viewModel.chatState.chat?.messages!!.isNotEmpty()) {
 
-                            items(viewModel.chatState.chat!!.messages, key = {
-                                it.id
-                            }) {
-                                ConversationElementComposable(
-                                    message = it, { viewModel.deleteMessage(it.reportId) }, navController = navController
-                                )
+            PullToRefreshBox(
+                isRefreshing = viewModel.chatState.isRefreshing,
+                onRefresh = { viewModel.getChat(accountId, true) },
+                modifier = Modifier
+                    .imeAwareInsets(90.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 16.dp, start = 8.dp, end = 8.dp)
+                ) {
+                    LazyColumn(
+                        state = lazyListState,
+                        modifier = Modifier.weight(1f),
+                        reverseLayout = true,
+                        contentPadding = PaddingValues(top = 24.dp),
+                        content = {
+                            if (viewModel.chatState.chat != null && viewModel.chatState.chat?.messages!!.isNotEmpty()) {
+
+                                items(viewModel.chatState.chat!!.messages, key = {
+                                    it.id
+                                }) {
+                                    ConversationElementComposable(
+                                        message = it,
+                                        { viewModel.deleteMessage(it.reportId) },
+                                        navController = navController
+                                    )
+                                }
+
+                                if (viewModel.chatState.isLoading) {
+                                    item {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(80.dp)
+                                                .wrapContentSize(Alignment.Center)
+                                        )
+                                    }
+                                }
+
+                                if (viewModel.chatState.endReached) {
+                                    item {
+                                        EndOfListComposable()
+                                    }
+                                }
                             }
 
-                            if (viewModel.chatState.isLoading) {
+                            if (viewModel.chatState.chat != null && viewModel.chatState.chat?.messages?.isEmpty() == true) {
                                 item {
-                                    CircularProgressIndicator(
+                                    Spacer(modifier = Modifier.height(56.dp))
+                                    Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(80.dp)
-                                            .wrapContentSize(Alignment.Center)
-                                    )
-                                }
-                            }
-
-                            if (viewModel.chatState.endReached) {
-                                item {
-                                    EndOfListComposable()
-                                }
-                            }
-                        }
-
-                        if (viewModel.chatState.chat != null && viewModel.chatState.chat?.messages?.isEmpty() == true) {
-                            item {
-                                Spacer(modifier = Modifier.height(56.dp))
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(
-                                            RoundedCornerShape(8.dp)
+                                            .clip(
+                                                RoundedCornerShape(8.dp)
+                                            )
+                                            .background(MaterialTheme.colorScheme.primaryContainer)
+                                            .padding(8.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(Res.string.beginning_of_chat_note),
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            modifier = Modifier.fillMaxWidth()
                                         )
-                                        .background(MaterialTheme.colorScheme.primaryContainer)
-                                        .padding(8.dp)
-                                ) {
-                                    Text(
-                                        text = stringResource(Res.string.beginning_of_chat_note),
-                                        textAlign = TextAlign.Center,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
+                                    }
                                 }
                             }
-                        }
-                    })
+                        })
 
 
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-                    OutlinedTextField(value = viewModel.newMessage,
-                        onValueChange = { viewModel.newMessage = it },
-                        label = { Text(stringResource(Res.string.message)) },
-                        singleLine = false,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.background
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    if (viewModel.newMessageState.isLoading) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .height(56.dp)
-                                .width(56.dp)
-                                .padding(0.dp, 0.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(MaterialTheme.colorScheme.primary)
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    } else {
-                        Button(
-                            onClick = {
-                                viewModel.sendMessage(accountId)
-                            },
-                            Modifier
-                                .height(56.dp)
-                                .width(56.dp)
-                                .padding(0.dp, 0.dp),
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
+                        OutlinedTextField(
+                            value = viewModel.newMessage,
+                            onValueChange = { viewModel.newMessage = it },
+                            label = { Text(stringResource(Res.string.message)) },
+                            singleLine = false,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.background
+                            ),
                             shape = RoundedCornerShape(12.dp),
-                            contentPadding = PaddingValues(12.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "send",
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
+                            modifier = Modifier.weight(1f)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        if (viewModel.newMessageState.isLoading) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .height(56.dp)
+                                    .width(56.dp)
+                                    .padding(0.dp, 0.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        } else {
+                            Button(
+                                onClick = {
+                                    viewModel.sendMessage(accountId)
+                                },
                                 Modifier
-                                    .fillMaxSize()
-                                    .fillMaxWidth()
+                                    .height(56.dp)
+                                    .width(56.dp)
+                                    .padding(0.dp, 0.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                contentPadding = PaddingValues(12.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Send,
+                                    contentDescription = "send",
+                                    Modifier
+                                        .fillMaxSize()
+                                        .fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
+
+                    ErrorComposable(message = viewModel.chatState.error)
+                }
+            }
+        }
+
+        TopAppBar(
+            modifier = Modifier.clip(
+                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            ),
+            title = {
+                if (viewModel.chatState.chat != null) {
+                    Row(
+                        modifier = Modifier.clickable {
+                            navController.navigate(Destination.Profile(accountId))
+                        }, verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AsyncImage(
+                            model = viewModel.chatState.chat!!.avatar,
+                            error = painterResource(Res.drawable.default_avatar),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .height(46.dp)
+                                .width(46.dp)
+                                .clip(CircleShape)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        Column {
+
+                            Text(text = viewModel.chatState.chat!!.name ?: "")
+                            Text(
+                                text = viewModel.chatState.chat!!.url.substringAfter("https://")
+                                    .substringBefore("/"),
+                                fontSize = 12.sp,
+                                lineHeight = 6.sp,
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
                 }
 
-                ErrorComposable(message = viewModel.chatState.error)
-            }
-        }
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    )
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
+
+
         InfiniteListHandler(lazyListState = lazyListState) {
             viewModel.getChatPaginated(accountId)
         }

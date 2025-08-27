@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.timelines.local_timeline
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
@@ -12,6 +13,7 @@ fun LocalTimelineComposable(
     viewModel: LocalTimelineViewModel = injectViewModel(key = "local-timeline-key") { localTimelineViewModel }
 ) {
     InfinitePostsList(items = viewModel.localTimelineState.localTimeline,
+        contentPaddingTop = 30.dp,
         isLoading = viewModel.localTimelineState.isLoading,
         isRefreshing = viewModel.localTimelineState.refreshing,
         error = viewModel.localTimelineState.error,

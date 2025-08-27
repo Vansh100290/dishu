@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,8 @@ fun TrendingHashtagElement(
 
     Column(
         Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .padding(vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
@@ -73,16 +76,15 @@ fun TrendingHashtagElement(
             }
         }
 
+        Box(modifier = Modifier.padding(horizontal = 8.dp).clip(
+            RoundedCornerShape(12.dp)
+        )) {
         LazyHorizontalGrid(
             rows = GridCells.Fixed(3),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.height(428.dp)
         ) {
-
-            item(span = { GridItemSpan(3) }) {
-                Spacer(Modifier.width(12.dp))
-            }
 
             itemsIndexed(viewModel.postsState.posts) { index, post ->
 
@@ -119,11 +121,7 @@ fun TrendingHashtagElement(
                     CustomPost(post = post, navController = navController, customModifier = customModifier)
                 }
             }
-
-            item(span = { GridItemSpan(3) }) {
-                Spacer(Modifier.width(12.dp))
-            }
         }
-
+        }
     }
 }

@@ -60,16 +60,13 @@ fun ProfileTopSection(
     openUrl: (url: String) -> Unit
 ) {
     if (account != null) {
-        Column(Modifier.padding(12.dp)) {
+        Column(Modifier.padding(12.dp).fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
                     model = account.avatar,
                     error = painterResource(Res.drawable.default_avatar),
                     contentDescription = "",
-                    modifier = Modifier
-                        .height(76.dp)
-                        .width(76.dp)
-                        .clip(CircleShape)
+                    modifier = Modifier.height(76.dp).width(76.dp).clip(CircleShape)
                 )
 
                 Row(
@@ -82,10 +79,14 @@ fun ProfileTopSection(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
-                        Text(text = pluralStringResource(Res.plurals.posts, account.postsCount), fontSize = 12.sp)
+                        Text(
+                            text = pluralStringResource(Res.plurals.posts, account.postsCount),
+                            fontSize = 12.sp
+                        )
                     }
 
-                    Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable {
                             navController.navigate(Destination.Followers(account.id, true))
                         }) {
@@ -94,10 +95,15 @@ fun ProfileTopSection(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
-                        Text(text = pluralStringResource(Res.plurals.follower, account.followersCount), fontSize = 12.sp)
+                        Text(
+                            text = pluralStringResource(
+                                Res.plurals.follower, account.followersCount
+                            ), fontSize = 12.sp
+                        )
                     }
 
-                    Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable {
                             navController.navigate(Destination.Followers(account.id, false))
                         }) {
@@ -106,7 +112,11 @@ fun ProfileTopSection(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
-                        Text(text = pluralStringResource(Res.plurals.following, account.followingCount), fontSize = 12.sp)
+                        Text(
+                            text = pluralStringResource(
+                                Res.plurals.following, account.followingCount
+                            ), fontSize = 12.sp
+                        )
                     }
                 }
             }
@@ -164,20 +174,22 @@ fun ProfileTopSection(
             Spacer(modifier = Modifier.height(12.dp))
 
             if (account.note.isNotBlank()) {
-                HashtagsMentionsTextView(text = account.note,
+                HashtagsMentionsTextView(
+                    text = account.note,
+                    textSize = 14.sp,
                     mentions = null,
                     navController = navController,
                     openUrl = { url -> openUrl(url) })
             }
 
-            account.website?.let {
+            if (account.website.isNotBlank()) {
                 Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
 
                     Text(
-                        text = account.website.toString().substringAfter("https://"),
+                        text = account.website.substringAfter("https://"),
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable(onClick = { openUrl(account.website.toString()) })
+                        modifier = Modifier.clickable(onClick = { openUrl(account.website) })
                     )
                 }
             }
@@ -193,11 +205,8 @@ fun ProfileTopSection(
                 }
                 Text(
                     text = stringResource(
-                        Res.string.joined_date,
-                        formatter.format(date)
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 10.sp
+                        Res.string.joined_date, formatter.format(date)
+                    ), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp
                 )
             }
         }
@@ -207,11 +216,9 @@ fun ProfileTopSection(
 @Composable
 private fun ProfileBadge(text: String, color: Color = MaterialTheme.colorScheme.onSurfaceVariant) {
     Box(
-        Modifier
-            .border(
+        Modifier.border(
                 BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp)
-            )
-            .padding(horizontal = 6.dp)
+            ).padding(horizontal = 6.dp)
     ) {
         Text(text = text, fontSize = 9.sp, color = color)
     }

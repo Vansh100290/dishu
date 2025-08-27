@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -19,12 +18,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -64,8 +63,8 @@ fun PreferencesComposable(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(scrollBehavior = scrollBehavior, title = {
-                Text(text = stringResource(Res.string.settings), fontWeight = FontWeight.Bold)
+            TopAppBar(scrollBehavior = scrollBehavior, title = {
+                Text(text = stringResource(Res.string.settings), fontWeight = FontWeight.Bold, fontSize = 18.sp)
             }, navigationIcon = {
                 IconButton(onClick = {
                     closePreferencesDrawer()
@@ -78,12 +77,8 @@ fun PreferencesComposable(
             })
         }) { paddingValues ->
         Column(
-            Modifier
-                .padding(paddingValues)
-                .padding(horizontal = 18.dp)
-                .padding(bottom = 18.dp)
-                .fillMaxSize()
-                .verticalScroll(state = rememberScrollState()),
+            Modifier.padding(paddingValues).padding(horizontal = 18.dp).padding(bottom = 18.dp)
+                .fillMaxSize().verticalScroll(state = rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 

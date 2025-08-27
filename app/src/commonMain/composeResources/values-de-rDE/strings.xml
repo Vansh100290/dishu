@@ -20,12 +20,12 @@
     <string name="followers">Follower</string>
     <plurals name="follower">
         <item quantity="one">Follower</item>
-        <item quantity="other">Followers</item>
+        <item quantity="other">Follower</item>
     </plurals>
     <string name="following">Gefolgt</string>
     <plurals name="following">
-        <item quantity="one">Following</item>
-        <item quantity="other">Following</item>
+        <item quantity="one">Gefolgt</item>
+        <item quantity="other">Gefolgt</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Beitrag</item>
@@ -264,19 +264,19 @@
         <item quantity="one">Jahr</item>
         <item quantity="other">Jahre</item>
     </plurals>
-    <string name="blur_sensitive_content">Blur sensitive content</string>
-    <string name="autoplay_videos">Autoplay Videos</string>
-    <string name="report_this_post">Report this post</string>
-    <string name="report">Report</string>
+    <string name="blur_sensitive_content">sensiblen Inhalt unschärfen</string>
+    <string name="autoplay_videos">Videos automatisch abspielen</string>
+    <string name="report_this_post">Diesen Beitrag melden</string>
+    <string name="report">Melden</string>
     <string name="spam">Spam</string>
-    <string name="adult_or_sensitive_content">Adult or Sensitive Content</string>
-    <string name="abusive_or_harmful">Abusive or Harmful</string>
-    <string name="underage_account">Underage Account</string>
-    <string name="violence">Violence</string>
-    <string name="copyright_infringement">Copyright infringement</string>
-    <string name="impersonation">Impersonation</string>
-    <string name="scam">Scam</string>
-    <string name="terrorism">Terrorism</string>
-    <string name="reported">Reported</string>
-    <string name="delete_account">Delete Account</string>
+    <string name="adult_or_sensitive_content">Erwachsenen oder sensibler Inhalt</string>
+    <string name="abusive_or_harmful">Missbräuchlich oder Schädigend</string>
+    <string name="underage_account">Minderjährigen-Konto</string>
+    <string name="violence">Gewalt</string>
+    <string name="copyright_infringement">Urheberrechtsverletzung</string>
+    <string name="impersonation">Identitätswechsel</string>
+    <string name="scam">Betrug</string>
+    <string name="terrorism">Terrorismus</string>
+    <string name="reported">Gemeldet</string>
+    <string name="delete_account">Konto löschen</string>
 </resources>
