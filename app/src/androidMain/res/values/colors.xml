@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Top bar / Header -->
+    <color name="purple_500">#FFFFFFFF</color> <!-- Instagram white header -->
+
+    <!-- Status bar / Dark variant -->
+    <color name="purple_700">#FFFFFFFF</color> <!-- Status bar white -->
+
+    <!-- Primary accent / Buttons / Floating icons -->
+    <color name="purple_200">#FF3F6C</color> <!-- Pinkish Instagram accent -->
+
+    <!-- Secondary accent / Floating buttons / Highlights -->
+    <color name="teal_200">#FFFA8C00</color> <!-- Orange gradient feel -->
+
+    <!-- Dark accents / icons -->
+    <color name="teal_700">#262626</color> <!-- Dark grey text/icons -->
+
+    <!-- Text / Main -->
+    <color name="black">#262626</color> <!-- Primary text -->
+
+    <!-- Background / Cards -->
+    <color name="white">#FFFFFF</color> <!-- White background -->
 </resources>
